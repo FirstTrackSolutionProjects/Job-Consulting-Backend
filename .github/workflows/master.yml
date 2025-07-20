@@ -43,7 +43,7 @@ jobs:
             --parameter-overrides \
               AwsAccessKeyId=${{ vars.AWS_ACCESS_KEY_ID_ }} \
               AwsRegion=ap-south-1 \
-              AwsSecretAccessKey=${{ vars.AWS_SECRET_ACCESS_KEY_ }} \ 
+              AwsSecretAccessKey=${{ vars.AWS_SECRET_ACCESS_KEY_ }} \
               S3BucketName=${{ vars.S3_BUCKET_NAME_ }} \
               S3BucketURL=${{ vars.S3_BUCKET_URL }} \
               EmailHost=${{ vars.EMAIL_HOST }} \

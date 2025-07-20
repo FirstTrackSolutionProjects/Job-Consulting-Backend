@@ -1,0 +1,54 @@
+name: Build and Deploy SAM Application
+
+on:
+  push:
+    branches:
+      - master # Trigger on push to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID_ }}
+          aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY_ }}
+          aws-region: ap-south-1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+        
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: Build SAM Application
+        run: sam build
+
+      - name: Deploy SAM Application
+        run: |
+          sam deploy \
+            --stack-name FTST-JOB-CONSULTING-BACKEND \
+            --s3-bucket ftst-job-consulting-backend-sam \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides \
+              AwsAccessKeyId=${{ vars.AWS_ACCESS_KEY_ID_ }} \
+              AwsRegion=ap-south-1 \
+              AwsSecretAccessKey=${{ vars.AWS_SECRET_ACCESS_KEY_ }} \ 
+              S3BucketName=${{ vars.S3_BUCKET_NAME_ }} \
+              S3BucketURL=${{ vars.S3_BUCKET_URL }} \
+              EmailHost=${{ vars.EMAIL_HOST }} \
+              EmailPort=${{ vars.EMAIL_PORT }} \
+              EmailSecure=${{ vars.EMAIL_SECURE }} \
+              ContactEmail=${{ vars.CONTACT_EMAIL }} \
+              ContactEmailPassword=${{ vars.CONTACT_EMAIL_PASSWORD }} \
+              AdminEmail=${{ vars.ADMIN_EMAIL }}

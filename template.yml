@@ -18,7 +18,7 @@ Parameters:
     Type: String
   ContactEmail:
     Type: String
-  ContactEmailPass:
+  ContactEmailPassword:
     Type: String
   AdminEmail:
     Type: String
@@ -47,7 +47,7 @@ Resources:
           S3_BUCKET_NAME_: !Ref S3BucketName
           S3_BUCKET_URL: !Ref S3BucketURL
           CONTACT_EMAIL: !Ref ContactEmail
-          CONTACT_EMAIL_PASSWORD: !Ref ContactEmailPass
+          CONTACT_EMAIL_PASSWORD: !Ref ContactEmailPassword
           ADMIN_EMAIL: !Ref AdminEmail
           EMAIL_HOST: !Ref EmailHost
           EMAIL_POST: !Ref EmailPort

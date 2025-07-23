@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-
 Parameters:
   AwsAccessKeyId:
     Type: String
@@ -25,45 +24,13 @@ Parameters:
     Type: String
   EmailSecure:
     Type: String
+  
 
 Resources:
-  ApiGatewayLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/apigateway/${ApiGateway}
-      RetentionInDays: 14
-
-  LambdaLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${AppFunction}
-      RetentionInDays: 14
-
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       StageName: api
-      AccessLogSetting:
-        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
-        Format: |
-          {
-            "requestId": "$context.requestId",
-            "ip": "$context.identity.sourceIp",
-            "caller": "$context.identity.caller",
-            "user": "$context.identity.user",
-            "requestTime": "$context.requestTime",
-            "httpMethod": "$context.httpMethod",
-            "resourcePath": "$context.resourcePath",
-            "status": "$context.status",
-            "protocol": "$context.protocol",
-            "responseLength": "$context.responseLength"
-          }
-      MethodSettings:
-        - LoggingLevel: INFO
-          ResourcePath: "/*"
-          HttpMethod: "*"
-          DataTraceEnabled: false
-          MetricsEnabled: true
 
   AppFunction:
     Type: AWS::Serverless::Function
@@ -85,6 +52,7 @@ Resources:
           EMAIL_HOST: !Ref EmailHost
           EMAIL_POST: !Ref EmailPort
           EMAIL_SECURE: !Ref EmailSecure
+
       Events:
         ProxyApi:
           Type: Api
@@ -100,7 +68,6 @@ Outputs:
       Fn::GetAtt:
         - AppFunction
         - Arn
-
   ApiUrl:
     Description: API Gateway endpoint URL
     Value:

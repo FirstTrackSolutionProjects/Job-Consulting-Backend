@@ -26,6 +26,8 @@ const getPutSignedUrl = async (req, res) => {
   if (!filename || !filetype) {
     return res.status(400).json({ message: 'Filename and filetype are required' });
   }
+  console.log("filename: ", filename);
+  console.log("filetype: ", filetype);
   try {
     const uploadURL = await generatePutSignedUrl(filename, filetype, isPrivate);
     return res.status(200).json({

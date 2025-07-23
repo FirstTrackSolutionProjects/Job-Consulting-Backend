@@ -19,6 +19,7 @@ const generateGetSignedUrl = async (filename) => {
 };
 
 const generatePutSignedUrl = async (filename, filetype, isPrivate = false) => {
+  console.log("Bucket: ",process.env.S3_BUCKET_NAME_)
   const command = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME_,
     Key: filename,

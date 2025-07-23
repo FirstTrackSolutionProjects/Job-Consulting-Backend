@@ -2,10 +2,11 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 const serverless = require('serverless-http');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 app.use(cors())
-app.use(express.json());
+app.use(bodyParser.json());
 
 const loanRoutes = require('./routes/loanRoutes');
 const s3Routes = require('./routes/s3Routes');

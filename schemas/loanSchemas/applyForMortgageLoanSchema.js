@@ -9,12 +9,6 @@ const MortgageLoanCountryEnum = z.enum(['India', 'USA', 'UK', 'Canada', 'Austral
 const MortgageLoanBusinessTypeEnum = z.enum(['Owned', 'Rented'], { error: 'Business type is required' });
 const MortgageLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
 const MortgageLoanStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const MortgageLoanStateEnum = z.enum(['State'], { error: 'State is required' });
-const MortgageLoanCityEnum = z.enum(['City'], { error: 'City is required' });
-const MortgageLoanBusinessStateEnum = z.enum(['State'], { error: 'Business state is required' });
-const MortgageLoanBusinessCityEnum = z.enum(['City'], { error: 'Business city is required' });
-const MortgageLoanOfficeStateEnum = z.enum(['State'], { error: 'Office state is required' });
-const MortgageLoanOfficeCityEnum = z.enum(['City'], { error: 'Office city is required' });
 
 const mortgageLoanSchema = z.object({
   title: MortgageLoanTitleEnum,
@@ -74,8 +68,22 @@ const mortgageLoanSchema = z.object({
         : undefined
   }).min(3, { error: "Mother's name must be at least 3 characters" }),
   residence: MortgageLoanResidenceEnum,
-  state: MortgageLoanStateEnum,
-  city: MortgageLoanCityEnum,
+  state: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'State is required'
+        : issue.code === 'invalid_type'
+        ? 'State must be string'
+        : undefined
+  }).min(2, { error: 'State must be at least 2 characters' }),
+  city: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'City is required'
+        : issue.code === 'invalid_type'
+        ? 'City must be string'
+        : undefined
+  }).min(2, { error: 'City must be at least 2 characters' }),
   pincode: z.string({
     error: issue =>
       issue.input === undefined
@@ -134,16 +142,44 @@ const mortgageLoanSchema = z.object({
   businessYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business years must be string' : undefined }).optional(),
   businessannualturnover: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business annual turnover must be string' : undefined }).optional(),
   businessAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business address must be string' : undefined }).optional(),
-  businessCity: MortgageLoanBusinessCityEnum.optional(),
+  businessState: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business State must be string'
+        : undefined
+  }).min(2, { error: 'Business State must be at least 2 characters' }).optional(),
+  businessCity: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business City must be string'
+        : undefined
+  }).min(2, { error: 'Business City must be at least 2 characters' }).optional(),
   businessPincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business pincode must be string' : undefined }).optional(),
-  businessState: MortgageLoanBusinessStateEnum.optional(),
   businessCountry: MortgageLoanCountryEnum.optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
   jobYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Job years must be string' : undefined }).optional(),
   officeAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office address must be string' : undefined }).optional(),
-  officeCity: MortgageLoanOfficeCityEnum.optional(),
+  officeState: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Office State must be string'
+        : undefined
+  }).min(2, { error: 'Office State must be at least 2 characters' }).optional(),
+  officeCity: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Office City must be string'
+        : undefined
+  }).min(2, { error: 'Office City must be at least 2 characters' }).optional(),
   officePincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office pincode must be string' : undefined }).optional(),
-  officeState: MortgageLoanOfficeStateEnum.optional(),
   officeCountry: MortgageLoanCountryEnum.optional(),
   mortgageProperty: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Mortgage property must be string' : undefined }).optional(),
   propertyValue: z.coerce.number({

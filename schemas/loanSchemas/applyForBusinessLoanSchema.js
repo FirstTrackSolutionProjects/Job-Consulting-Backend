@@ -10,10 +10,6 @@ const BusinessLoanBusinessCountryEnum = z.enum(['India'], { error: 'Business cou
 const BusinessLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
 const BusinessLoanBusinessTypeEnum = z.enum(['Owned', 'Rented'], { error: 'Business type is required' });
 const BusinessLoanStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const BusinessLoanStateEnum = z.enum(['State'], { error: 'State is required' });
-const BusinessLoanCityEnum = z.enum(['City'], { error: 'City is required' });
-const BusinessLoanBusinessStateEnum = z.enum(['State'], { error: 'Business state is required' });
-const BusinessLoanBusinessCityEnum = z.enum(['City'], { error: 'Business city is required' });
 
 const businessLoanSchema = z.object({
   title: BusinessLoanTitleEnum,
@@ -97,8 +93,22 @@ const businessLoanSchema = z.object({
         ? 'Landmark must be string'
         : undefined
   }).min(2, { error: 'Landmark must be at least 2 characters' }),
-  state: BusinessLoanStateEnum,
-  city: BusinessLoanCityEnum,
+  state: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'State is required'
+        : issue.code === 'invalid_type'
+        ? 'State must be string'
+        : undefined
+  }).min(2, { error: 'State must be at least 2 characters' }),
+  city: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'City is required'
+        : issue.code === 'invalid_type'
+        ? 'City must be string'
+        : undefined
+  }).min(2, { error: 'City must be at least 2 characters' }),
   pincode: z.string({
     error: issue =>
       issue.input === undefined
@@ -150,8 +160,22 @@ const businessLoanSchema = z.object({
         ? 'Business address must be string'
         : undefined
   }).min(5, { error: 'Business address must be at least 5 characters' }),
-  businessCity: BusinessLoanBusinessCityEnum.optional(),
-  businessState: BusinessLoanBusinessStateEnum.optional(),
+  businessState: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business State must be string'
+        : undefined
+  }).min(2, { error: 'Business State must be at least 2 characters' }).optional(),
+  businessCity: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business City must be string'
+        : undefined
+  }).min(2, { error: 'Business City must be at least 2 characters' }).optional(),
   businessPincode: z.string({
     error: issue =>
       issue.input === undefined

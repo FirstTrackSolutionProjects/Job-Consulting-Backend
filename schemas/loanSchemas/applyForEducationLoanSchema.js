@@ -5,8 +5,6 @@ const EducationLoanTitleEnum = z.enum(['Mr', 'Mrs', 'Miss', 'Dr'], { error: 'Tit
 const EducationLoanGenderEnum = z.enum(['Male', 'Female', 'Other'], { error: 'Gender is required' });
 const EducationLoanMaritalStatusEnum = z.enum(['Unmarried', 'Married', 'Single'], { error: 'Marital status is required' });
 const EducationLoanStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const EducationLoanStateEnum = z.enum(['State'], { error: 'State is required' });
-const EducationLoanCityEnum = z.enum(['City'], { error: 'City is required' });
 const EducationLoanCountryEnum = z.enum(['India'], { error: 'Country is required' });
 
 const educationLoanSchema = z.object({
@@ -87,8 +85,22 @@ const educationLoanSchema = z.object({
         ? "Mother's name must be string"
         : undefined
   }).min(3, { error: "Mother's name must be at least 3 characters" }),
-  state: EducationLoanStateEnum,
-  city: EducationLoanCityEnum,
+  state: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? "State is required"
+        : issue.code === 'invalid_type'
+        ? "State must be string"
+        : undefined
+  }).min(3, { error: "State must be at least 3 characters" }),
+  city: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? "City is required"
+        : issue.code === 'invalid_type'
+        ? "City must be string"
+        : undefined
+  }).min(3, { error: "City must be at least 3 characters" }),
   pincode: z.string({
     error: issue =>
       issue.input === undefined

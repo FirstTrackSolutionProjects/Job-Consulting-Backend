@@ -10,13 +10,6 @@ const HomeLoanBusinessTypeEnum = z.enum(['Owned', 'Rented'], { error: 'Business 
 const HomeLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
 const HomeLoanStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
 // For state/city enums, you may want to fill with actual options from your UI
-const HomeLoanStateEnum = z.enum(['State'], { error: 'State is required' });
-const HomeLoanCityEnum = z.enum(['City'], { error: 'City is required' });
-const HomeLoanBusinessStateEnum = z.enum(['State'], { error: 'Business state is required' });
-const HomeLoanBusinessCityEnum = z.enum(['City'], { error: 'Business city is required' });
-const HomeLoanOfficeStateEnum = z.enum(['State'], { error: 'Office state is required' });
-const HomeLoanOfficeCityEnum = z.enum(['City'], { error: 'Office city is required' });
-
 const homeLoanSchema = z.object({
   title: HomeLoanTitleEnum,
   fullName: z.string({
@@ -75,8 +68,22 @@ const homeLoanSchema = z.object({
         : undefined
   }).min(3, { error: "Mother's name must be at least 3 characters" }),
   residence: HomeLoanResidenceEnum,
-  state: HomeLoanStateEnum,
-  city: HomeLoanCityEnum,
+  state: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'State is required'
+        : issue.code === 'invalid_type'
+        ? 'State must be string'
+        : undefined
+  }).min(2, { error: 'State must be at least 2 characters' }),
+  city: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'City is required'
+        : issue.code === 'invalid_type'
+        ? 'City must be string'
+        : undefined
+  }).min(2, { error: 'City must be at least 2 characters' }),
   pincode: z.string({
     error: issue =>
       issue.input === undefined
@@ -215,17 +222,45 @@ const homeLoanSchema = z.object({
   businessYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business years must be string' : undefined }).optional(),
   businessannualturnover: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business annual turnover must be string' : undefined }).optional(),
   businessAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business address must be string' : undefined }).optional(),
-  businessCity: HomeLoanBusinessCityEnum.optional(),
+  businessState: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business State must be string'
+        : undefined
+  }).min(2, { error: 'Business State must be at least 2 characters' }).optional(),
+  businessCity: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Business City must be string'
+        : undefined
+  }).min(2, { error: 'Business City must be at least 2 characters' }).optional(),
   businessPincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business pincode must be string' : undefined }).optional(),
-  businessState: HomeLoanBusinessStateEnum.optional(),
   businessCountry: HomeLoanCountryEnum.optional(),
   businessProof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business proof must be string' : undefined }).optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
   jobYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Job years must be string' : undefined }).optional(),
   officeAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office address must be string' : undefined }).optional(),
-  officeCity: HomeLoanOfficeCityEnum.optional(),
+  officeState: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Office State must be string'
+        : undefined
+  }).min(2, { error: 'Office State must be at least 2 characters' }).optional(),
+  officeCity: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? undefined
+        : issue.code === 'invalid_type'
+        ? 'Office City must be string'
+        : undefined
+  }).min(2, { error: 'Office City must be at least 2 characters' }).optional(),
   officePincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office pincode must be string' : undefined }).optional(),
-  officeState: HomeLoanOfficeStateEnum.optional(),
   officeCountry: HomeLoanCountryEnum.optional(),
   photo: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Photo must be string' : undefined }).optional(),
   aadharFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),

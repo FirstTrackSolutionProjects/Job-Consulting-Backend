@@ -11,6 +11,7 @@ app.use((req, res, next) => {
   if (Buffer.isBuffer(req.body)) {
     req.rawBody = req.body;
     req.body = req.body.toString(); // convert buffer to string
+    req.body = JSON.parse(req.body);
   }
   next();
 });

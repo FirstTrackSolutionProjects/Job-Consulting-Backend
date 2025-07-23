@@ -6,6 +6,15 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 app.use(cors())
+
+app.use((req, res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    req.rawBody = req.body;
+    req.body = req.body.toString(); // convert buffer to string
+  }
+  next();
+});
+
 app.use(bodyParser.json());
 
 const loanRoutes = require('./routes/loanRoutes');

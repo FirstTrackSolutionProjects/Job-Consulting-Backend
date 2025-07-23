@@ -24,6 +24,8 @@ const getGetSignedUrl = async (req, res) => {
 const getPutSignedUrl = async (req, res) => {
   const { filename, filetype, isPrivate } = req.body;
   console.log(req.body);
+  console.log(req.body.filename);
+  console.log(JSON.parse(req.body).filename)
   if (!filename || !filetype) {
     return res.status(400).json({ message: 'Filename and filetype are required' });
   }

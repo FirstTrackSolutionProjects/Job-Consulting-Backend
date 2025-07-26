@@ -65,8 +65,8 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('State', businessState)}
         ${row('Pincode', businessPincode)}
         ${row('Country', businessCountry)}
-        ${row('GST Number', gst)}
-        ${row('MSME Reg', msme)}
+        ${row('GST Number', gst, true)}
+        ${row('MSME Reg', msme, true)}
         ${row('Electricity Bill', electricityBill, true)}
 
         <tr><td colspan="2"><strong>Financial & Loan Details</strong></td></tr>

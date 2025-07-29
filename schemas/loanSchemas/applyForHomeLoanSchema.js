@@ -243,6 +243,7 @@ const homeLoanSchema = z.object({
   businessProof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business proof must be string' : undefined }).optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
   jobYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Job years must be string' : undefined }).optional(),
+  monthlyIncome: z.coerce.number({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Monthly income must be a number' : undefined }).min(1000, { error: 'Monthly income must be at least ₹1000' }).optional(),
   officeAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office address must be string' : undefined }).optional(),
   officeState: z.string({
     error: issue =>
@@ -371,6 +372,10 @@ const homeLoanSchema = z.object({
 .refine(
   data => data.profession !== 'Service' || (data.officeCountry !== undefined && data.officeCountry !== ''),
   { message: 'Office country is required for service applicants', path: ['officeCountry'] }
+)
+.refine(
+  data => data.profession !== 'Service' || (data.monthlyIncome !== undefined && !isNaN(data.monthlyIncome)),
+  { message: 'Monthly income is required for service applicants', path: ['monthlyIncome'] }
 )
 // Partnership deed required if organizationType is partnership
 .refine(

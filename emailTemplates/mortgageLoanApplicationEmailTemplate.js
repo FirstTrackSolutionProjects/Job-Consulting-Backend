@@ -12,18 +12,24 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence,
     presentAddress, landmark, city, state, pincode, country,
-    permanentAddress, aadhar, pan, income,
+    permanentAddress, aadhar, pan,
     profession, professionType,
-    loanAmount, purpose,
-    location, propertyValue, mortgageProperty,
-    accountHolderName, bankName, accountNumber, ifsc, bankProof,
-    photo, aadharFile, panFile,
-    rentagreement, electricityBill, tradeLicense, foodLicense, drugLicense,
-    organizationType, businessType, businessName, businessYears, businessannualturnover,
+    // Business fields
+    organizationType, businessType, industry, businessName, businessYears, businessannualturnover,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
-    companyName, jobYears, officeAddress, officeCity, officeState, officePincode, officeCountry,
-    cin, companypan, companytan, gst, msme,
-    bankStatementsCurrentYear1, bankStatementsCCYear1,
+    // Service fields
+    companyName, jobYears, monthlyIncome,
+    officeAddress, officeCity, officeState, officePincode, officeCountry,
+    // Property and loan details
+    mortgageProperty, propertyValue, loanAmount, purpose,
+    // Bank details
+    accountHolderName, bankName, accountNumber, ifsc,
+    // File fields
+    photo, aadharFile, panFile, bankProof, incomeproof,
+    companypan, companytan, cin, gst, msme,
+    tradeLicense, foodLicense, drugLicense, electricityBill,
+    rentagreement, deedagreement,
+    bankStatementsCurrent, bankStatementsCurrentYear1, bankStatementsCCYear1,
     itr1, itr2, itr3, computation1, computation2, computation3
   } = data;
 
@@ -35,15 +41,88 @@ const generateEmailHTMLTemplate = (data) => {
     return `<tr><td><strong>${label}</strong></td><td>${value}</td></tr>`;
   };
 
+  // Business section rendering
+  const renderBusinessDetails = () => {
+    if (profession !== 'Business') return '';
+    return `
+      <tr><td colspan="2"><strong>Business Details</strong></td></tr>
+      ${row('Profession Type', professionType)}
+      ${row('Organization Type', organizationType)}
+      ${row('Business Type', businessType)}
+      ${row('Industry', industry)}
+      ${row('Business Name', businessName)}
+      ${row('Years in Business', businessYears)}
+      ${row('Annual Turnover', `₹${businessannualturnover}`)}
+      ${row('Business Address', `${businessAddress}, ${businessCity}, ${businessState} - ${businessPincode}, ${businessCountry}`)}
+    `;
+  };
+
+  // Service section rendering
+  const renderServiceDetails = () => {
+    if (profession !== 'Service') return '';
+    return `
+      <tr><td colspan="2"><strong>Service Details</strong></td></tr>
+      ${row('Profession Type', professionType)}
+      ${row('Company Name', companyName)}
+      ${row('Years in Job', jobYears)}
+      ${row('Monthly Income', `₹${monthlyIncome}`)}
+      ${row('Office Address', `${officeAddress}, ${officeCity}, ${officeState} - ${officePincode}, ${officeCountry}`)}
+    `;
+  };
+
+  // Business-specific files
+  const renderBusinessFiles = () => {
+    if (profession !== 'Business') return '';
+    
+    let businessFiles = `
+      ${row('Company PAN', companypan, true)}
+      ${row('Company TAN', companytan, true)}
+      ${row('CIN', cin, true)}
+      ${row('GST Certificate', gst, true)}
+      ${row('MSME Certificate', msme, true)}
+      ${row('Trade License', tradeLicense, true)}
+      ${row('Food License', foodLicense, true)}
+      ${row('Drug License', drugLicense, true)}
+      ${row('Electricity Bill', electricityBill, true)}
+      ${row('Bank Statement (Current)', bankStatementsCurrent, true)}
+      ${row('Bank Statement (Current Year)', bankStatementsCurrentYear1, true)}
+      ${row('Bank Statement (CC Year)', bankStatementsCCYear1, true)}
+      ${row('ITR Year 1', itr1, true)}
+      ${row('ITR Year 2', itr2, true)}
+      ${row('ITR Year 3', itr3, true)}
+      ${row('Computation Year 1', computation1, true)}
+      ${row('Computation Year 2', computation2, true)}
+      ${row('Computation Year 3', computation3, true)}
+    `;
+
+    // Conditional files based on business type and organization type
+    if (businessType === 'rented') {
+      businessFiles += `${row('Rent Agreement', rentagreement, true)}`;
+    }
+
+    if (organizationType === 'partnership') {
+      businessFiles += `${row('Partnership Deed Agreement', deedagreement, true)}`;
+    }
+
+    return businessFiles;
+  };
+
+  // Service-specific files
+  const renderServiceFiles = () => {
+    if (profession !== 'Service') return '';
+    return `${row('Income Proof', incomeproof, true)}`;
+  };
+
   return `
   <div style="font-family: Arial, sans-serif; color: #333;">
     <h2>Mortgage Loan Application</h2>
     <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
       <tbody>
-        ${row('Full Name', `${title} ${fullName}`)}
+        <tr><td colspan="2"><strong>Personal Details</strong></td></tr>
+        ${row('Applicant Name', `${title} ${fullName}`)}
         ${row('Email', email)}
         ${row('Phone', `${stdCode} ${phone}`)}
-        ${row('Alternate Phone', `${altStdCode || ''} ${altPhone || ''}`)}
+        ${row('Alternate Phone', altStdCode && altPhone ? `${altStdCode} ${altPhone}` : '')}
         ${row('Date of Birth', dob)}
         ${row('Gender', gender)}
         ${row('Marital Status', maritalStatus)}
@@ -51,68 +130,44 @@ const generateEmailHTMLTemplate = (data) => {
         ${maritalStatus === 'Married' ? row('Children Count', childrenCount) : ''}
         ${row("Father's Name", fatherName)}
         ${row("Mother's Name", motherName)}
+
+        <tr><td colspan="2"><strong>Address Details</strong></td></tr>
         ${row('Residence Type', residence)}
-        ${row('Present Address', `${presentAddress}, ${landmark}, ${city}, ${state} - ${pincode}, ${country}`)}
+        ${row('Present Address', `${presentAddress}, ${landmark ? landmark + ', ' : ''}${city}, ${state} - ${pincode}, ${country}`)}
         ${row('Permanent Address', permanentAddress)}
+
+        <tr><td colspan="2"><strong>KYC Details</strong></td></tr>
         ${row('Aadhaar Number', aadhar)}
         ${row('PAN Number', pan)}
-        ${row('Monthly Income (INR)', income)}
-
-        <tr><td colspan="2"><strong>Property Details</strong></td></tr>
-        ${row('Mortgage Property', mortgageProperty)}
-        ${row('Property Location', location)}
-        ${row('Property Value (INR)', `₹${propertyValue}`)}
-
-        <tr><td colspan="2"><strong>Loan Details</strong></td></tr>
-        ${row('Loan Amount (INR)', `₹${loanAmount}`)}
-        ${row('Purpose', purpose)}
 
         <tr><td colspan="2"><strong>Professional Details</strong></td></tr>
         ${row('Profession', profession)}
-        ${profession === 'Business' ? row('Profession Type', professionType) : ''}
-        ${profession === 'Business' ? row('Organization Type', organizationType) : ''}
-        ${profession === 'Business' ? row('Business Type', businessType) : ''}
-        ${profession === 'Business' ? row('Business Name', businessName) : ''}
-        ${profession === 'Business' ? row('Business Years', businessYears) : ''}
-        ${profession === 'Business' ? row('Annual Turnover', businessannualturnover) : ''}
-        ${profession === 'Business' ? row('Business Address', businessAddress) : ''}
-        ${profession === 'Business' ? row('Business City', businessCity) : ''}
-        ${profession === 'Business' ? row('Business State', businessState) : ''}
-        ${profession === 'Business' ? row('Business Pincode', businessPincode) : ''}
-        ${profession === 'Business' ? row('Business Country', businessCountry) : ''}
-        ${profession === 'Business' ? row('Partnership Deed (CIN)', cin, true) : ''}
-        ${profession === 'Business' ? row('Company PAN', companypan, true) : ''}
-        ${profession === 'Business' ? row('Company TAN', companytan, true) : ''}
+        ${renderBusinessDetails()}
+        ${renderServiceDetails()}
 
-        <tr><td colspan="2"><strong>Service Details</strong></td></tr>
-        ${profession === 'Service' ? row('Company Name', companyName) : ''}
-        ${profession === 'Service' ? row('Job Years', jobYears) : ''}
-        ${profession === 'Service' ? row('Office Address', officeAddress) : ''}
-        ${profession === 'Service' ? row('Office City', officeCity) : ''}
-        ${profession === 'Service' ? row('Office State', officeState) : ''}
-        ${profession === 'Service' ? row('Office Pincode', officePincode) : ''}
-        ${profession === 'Service' ? row('Office Country', officeCountry) : ''}
+        <tr><td colspan="2"><strong>Property Details</strong></td></tr>
+        ${row('Mortgage Property', mortgageProperty)}
+        ${row('Property Value', `₹${propertyValue}`)}
 
-        <tr><td colspan="2"><strong>Uploaded Documents</strong></td></tr>
+        <tr><td colspan="2"><strong>Loan Details</strong></td></tr>
+        ${row('Loan Amount', `₹${loanAmount}`)}
+        ${row('Purpose', purpose)}
+
+        <tr><td colspan="2"><strong>Bank Details</strong></td></tr>
+        ${row('Account Holder Name', accountHolderName)}
+        ${row('Bank Name', bankName)}
+        ${row('Account Number', accountNumber)}
+        ${row('IFSC Code', ifsc)}
+
+        <tr><td colspan="2"><strong>Basic Documents</strong></td></tr>
         ${row('Photo', photo, true)}
         ${row('Aadhaar File', aadharFile, true)}
         ${row('PAN File', panFile, true)}
         ${row('Bank Proof', bankProof, true)}
-        ${row('Rent Agreement', rentagreement, true)}
-        ${row('Electricity Bill', electricityBill, true)}
-        ${row('Trade License', tradeLicense, true)}
-        ${row('Food License', foodLicense, true)}
-        ${row('Drug License', drugLicense, true)}
-        ${row('GST File', gst, true)}
-        ${row('MSME File', msme, true)}
-        ${row('Bank Statement (Current Year)', bankStatementsCurrentYear1, true)}
-        ${row('Bank Statement (CC Year)', bankStatementsCCYear1, true)}
-        ${row('ITR Year 1', itr1, true)}
-        ${row('ITR Year 2', itr2, true)}
-        ${row('ITR Year 3', itr3, true)}
-        ${row('Computation Year 1', computation1, true)}
-        ${row('Computation Year 2', computation2, true)}
-        ${row('Computation Year 3', computation3, true)}
+
+        <tr><td colspan="2"><strong>Professional Documents</strong></td></tr>
+        ${renderBusinessFiles()}
+        ${renderServiceFiles()}
       </tbody>
     </table>
   </div>

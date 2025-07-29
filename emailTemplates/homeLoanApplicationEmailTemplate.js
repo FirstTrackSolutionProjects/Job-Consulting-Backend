@@ -12,17 +12,17 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence, presentAddress, landmark,
     city, state, pincode, country, permanentAddress,
-    aadhar, pan, income, location, propertyValue,
+    aadhar, pan, location, propertyValue,
     loanAmount, purpose,
     profession, professionType, organizationType,
     businessType, businessName, businessYears, businessannualturnover,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
-    companyName, jobYears, officeAddress, officeCity, officeState, officePincode, officeCountry,
+    companyName, jobYears, monthlyIncome, officeAddress, officeCity, officeState, officePincode, officeCountry,
     photo, aadharFile, panFile, bankProof, rentagreement,
     electricityBill, tradeLicense, foodLicense, drugLicense,
-    cin, companypan, companytan, gst, msme,
-    bankStatementsCurrentYear1, bankStatementsCCYear1,
-    itr1, itr2, itr3, computation1, computation2, computation3, monthlyIncome
+    cin, companypan, companytan, gst, msme, deedagreement,
+    bankStatementsCurrentYear1, 
+    itr1, itr2, itr3, computation1, computation2, computation3, incomeproof
   } = data;
 
   const row = (label, value, isFile = false) => {
@@ -77,9 +77,10 @@ const generateEmailHTMLTemplate = (data) => {
         ${profession === 'Business' ? row('Business State', businessState) : ''}
         ${profession === 'Business' ? row('Business Pincode', businessPincode) : ''}
         ${profession === 'Business' ? row('Business Country', businessCountry) : ''}
-        ${profession === 'Business' ? row('Partnership Deed', cin, true) : ''}
+        ${profession === 'Business' ? row('Partnership Deed', deedagreement, true) : ''}
         ${profession === 'Business' ? row('Company PAN', companypan, true) : ''}
         ${profession === 'Business' ? row('Company TAN', companytan, true) : ''}
+        ${profession === 'Business' ? row('Company Identification Number (CIN)', cin, true) : ''}
 
         <tr><td colspan="2"><strong>Service Details</strong></td></tr>
         ${profession === 'Service' ? row('Profession Type', professionType) : ''}
@@ -108,13 +109,14 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('GST File', gst, true)}
         ${row('MSME File', msme, true)}
         ${row('Bank Statement (Current Year)', bankStatementsCurrentYear1, true)}
-        ${row('Bank Statement (CC Year)', bankStatementsCCYear1, true)}
+       
         ${row('ITR Year 1', itr1, true)}
         ${row('ITR Year 2', itr2, true)}
         ${row('ITR Year 3', itr3, true)}
         ${row('Computation Year 1', computation1, true)}
         ${row('Computation Year 2', computation2, true)}
         ${row('Computation Year 3', computation3, true)}
+        ${row('Income Proof', incomeproof, true)}
       </tbody>
     </table>
   </div>

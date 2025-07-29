@@ -1,4 +1,4 @@
-import { z } from "zod";
+const { z } = require('zod');
 
 // Enums (unique to Education Loan)
 const EducationLoanTitleEnum = z.enum(['Mr', 'Mrs', 'Miss', 'Dr'], { error: 'Title is required' });
@@ -392,4 +392,4 @@ const educationLoanSchema = z.object({
   { message: 'PhD certificate and CGPA are required for PhD qualification', path: ['phdCertificate'] }
 );
 
-export default educationLoanSchema;
+module.exports =  educationLoanSchema;

@@ -14,7 +14,6 @@ const generateEmailHTMLTemplate = (data) => {
     city, state, pincode, country, permanentAddress,
     aadhar, pan, income, location, propertyValue,
     loanAmount, purpose,
-    guardianName, guardianRelation, guardianStdCode, guardianPhone,
     profession, professionType, organizationType,
     businessType, businessName, businessYears, businessannualturnover,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
@@ -23,7 +22,7 @@ const generateEmailHTMLTemplate = (data) => {
     electricityBill, tradeLicense, foodLicense, drugLicense,
     cin, companypan, companytan, gst, msme,
     bankStatementsCurrentYear1, bankStatementsCCYear1,
-    itr1, itr2, itr3, computation1, computation2, computation3,
+    itr1, itr2, itr3, computation1, computation2, computation3, monthlyIncome
   } = data;
 
   const row = (label, value, isFile = false) => {
@@ -86,6 +85,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${profession === 'Service' ? row('Profession Type', professionType) : ''}
         ${profession === 'Service' ? row('Company Name', companyName) : ''}
         ${profession === 'Service' ? row('Job Years', jobYears) : ''}
+        ${profession === 'Service' ? row('Monthly Income', monthlyIncome) : ''}
         ${profession === 'Service' ? row('Office Address', officeAddress) : ''}
         ${profession === 'Service' ? row('Office City', officeCity) : ''}
         ${profession === 'Service' ? row('Office State', officeState) : ''}

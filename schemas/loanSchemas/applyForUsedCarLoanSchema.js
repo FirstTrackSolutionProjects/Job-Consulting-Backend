@@ -7,12 +7,12 @@ const UsedCarLoanMaritalStatusEnum = z.enum(['Unmarried', 'Married', 'Single'], 
 const UsedCarLoanResidenceEnum = z.enum(['Own', 'Rented'], { error: 'Residence type is required' });
 const UsedCarLoanCountryEnum = z.enum(['India'], { error: 'Country is required' });
 const UsedCarLoanStdCodeEnum = z.enum(['+91'], { error: 'STD code is required' });
-const UsedCarLoanAltStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const UsedCarLoanProfessionEnum = z.enum(['Business', 'Service', 'None'], { error: 'Profession is required' });
+const UsedCarLoanAltStdCodeEnum = z.enum(['+91'], { error: 'STD code is required' });
+const UsedCarLoanProfessionEnum = z.enum(['Business', 'Service'], { error: 'Profession is required' });
 const UsedCarLoanProfessionTypeBusinessEnum = z.enum(['Retail', 'Manufacturing', 'Freelancer', 'IT Consulting', 'Media', 'Internet', 'Other'], { error: 'Profession type is required' });
 const UsedCarLoanProfessionTypeServiceEnum = z.enum(['Private Job', 'Government Job', 'Other'], { error: 'Service type is required' });
-const UsedCarLoanBusinessTypeEnum = z.enum(['own', 'rented'], { error: 'Business type is required' });
-const UsedCarLoanOrganizationTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
+const UsedCarLoanBusinessTypeEnum = z.enum(['Own', 'Rented'], { error: 'Business type is required' });
+const UsedCarLoanOrganizationTypeEnum = z.enum(['Proprietor', 'Partnership', 'Private Limited', 'Other'], { error: 'Organization type is required' });
 
 const usedCarLoanSchema = z.object({
   title: UsedCarLoanTitleEnum,
@@ -109,12 +109,12 @@ const usedCarLoanSchema = z.object({
   permanentAddress: z.string({
     error: issue =>
       issue.input === undefined
-        ? 'Permanent address is required'
+        ? undefined
         : issue.code === 'invalid_type'
         ? 'Permanent address must be string'
         : undefined
-  }).min(5, { error: 'Permanent address must be at least 5 characters' }),
-  aadhar: z.string({
+  }).optional(),
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -224,32 +224,31 @@ const usedCarLoanSchema = z.object({
         : undefined
   }).min(5, { error: 'IFSC code must be at least 5 characters' }),
   // File fields
-  photo: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Photo must be string' : undefined }).optional(),
-  aadharFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),
-  panFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'PAN file must be string' : undefined }).optional(),
-  bankProof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank proof must be string' : undefined }).optional(),
+  photo: z.string({ error: issue => issue.input === undefined ? 'Photo is required' : issue.code === 'invalid_type' ? 'Photo must be string' : undefined }).min(1, { error: 'Photo is required' }),
+  aadhaarFile: z.string({ error: issue => issue.input === undefined ? 'Aadhaar Card is required' : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).min(1, { error: 'Aadhaar Card is required' }),
+  panFile: z.string({ error: issue => issue.input === undefined ? 'PAN Card is required' : issue.code === 'invalid_type' ? 'PAN file must be string' : undefined }).min(1, { error: 'PAN Card is required' }),
+  bankProof: z.string({ error: issue => issue.input === undefined ? 'Bank Statement is required' : issue.code === 'invalid_type' ? 'Bank proof must be string' : undefined }).min(1, { error: 'Bank Statement is required' }),
   quotations: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Quotations must be string' : undefined }).optional(),
-  incomeproof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Income proof must be string' : undefined }).optional(),
-  gst: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'GST must be string' : undefined }).optional(),
-  msme: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'MSME must be string' : undefined }).optional(),
+  gst: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'GST Certificate must be string' : undefined }).optional(),
+  msme: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'MSME/Udyam Certificate must be string' : undefined }).optional(),
+  electricityBill: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Electricity Bill must be string' : undefined }).optional(),
+  businessType: UsedCarLoanBusinessTypeEnum.optional(),
+  rentagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Rent Agreement must be string' : undefined }).optional(),
   cin: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'CIN must be string' : undefined }).optional(),
   companypan: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company PAN must be string' : undefined }).optional(),
   companytan: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company TAN must be string' : undefined }).optional(),
-  electricityBill: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Electricity bill must be string' : undefined }).optional(),
-  rentagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Rent agreement must be string' : undefined }).optional(),
-  tradeLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Trade license must be string' : undefined }).optional(),
-  foodLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Food license must be string' : undefined }).optional(),
-  drugLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Drug license must be string' : undefined }).optional(),
-  bankStatementsCurrentYear1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statement (current year) must be string' : undefined }).optional(),
-  bankStatementsCCYear1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statement (CC year) must be string' : undefined }).optional(),
-  bankStatementsCurrent: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statements (current) must be string' : undefined }).optional(),
-  deedagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Deed agreement must be string' : undefined }).optional(),
-  itr1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 1 must be string' : undefined }).optional(),
-  itr2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 2 must be string' : undefined }).optional(),
-  itr3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 3 must be string' : undefined }).optional(),
-  computation1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation 1 must be string' : undefined }).optional(),
-  computation2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation 2 must be string' : undefined }).optional(),
-  computation3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation 3 must be string' : undefined }).optional(),
+  tradeLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Trade License must be string' : undefined }).optional(),
+  foodLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Food License must be string' : undefined }).optional(),
+  drugLicense: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Drug License must be string' : undefined }).optional(),
+  deedagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Partnership Deed must be string' : undefined }).optional(),
+  bankStatementsCurrent: z.string({ error: issue => issue.input === undefined ? '1 Year Bank Statements (CA) is required' : issue.code === 'invalid_type' ? 'Bank Statements (CA) must be string' : undefined }).min(1, { error: '1 Year Bank Statements (CA) is required' }),
+  incomeproof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Salary Slip must be string' : undefined }).optional(),
+  itr1: z.string({ error: issue => issue.input === undefined ? 'ITR - Year 1 is required' : issue.code === 'invalid_type' ? 'ITR - Year 1 must be string' : undefined }).min(1, { error: 'ITR - Year 1 is required' }),
+  itr2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR - Year 2 must be string' : undefined }).optional(),
+  itr3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR - Year 3 must be string' : undefined }).optional(),
+  computation1: z.string({ error: issue => issue.input === undefined ? 'Computation - Year 1 is required' : issue.code === 'invalid_type' ? 'Computation - Year 1 must be string' : undefined }).min(1, { error: 'Computation - Year 1 is required' }),
+  computation2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation - Year 2 must be string' : undefined }).optional(),
+  computation3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation - Year 3 must be string' : undefined }).optional(),
 })
 // Marital status logic
 .refine(

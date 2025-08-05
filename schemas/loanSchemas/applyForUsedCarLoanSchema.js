@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const { TITLES, GENDERS, MARITAL_STATUS, RESIDENCE_OWNERSHIP_TYPES, USED_CAR_LOAN_COUNTRIES, USED_CAR_LOAN_STD_CODES, USED_CAR_LOAN_PROFESSIONS, BUSINESS_PROFESSION_TYPES, SERVICE_PROFESSION_TYPES, BUSINESS_ORGANIZATION_TYPES } = require('../../constants');
+const { TITLES, GENDERS, MARITAL_STATUS, RESIDENCE_OWNERSHIP_TYPES, USED_CAR_LOAN_COUNTRIES, USED_CAR_LOAN_STD_CODES, USED_CAR_LOAN_PROFESSIONS, BUSINESS_PROFESSION_TYPES, SERVICE_PROFESSION_TYPES, BUSINESS_ORGANIZATION_TYPES, BUSINESS_OWNERSHIP_TYPES } = require('../../constants');
 
 // Unique Enums for Used Car Loan
 
@@ -293,6 +293,10 @@ const usedCarLoanSchema = z.object({
 .refine(
   data => data.profession !== 'Business' || (data.businessType !== undefined && data.businessType !== ''),
   { message: 'Business type is required for business applicants', path: ['businessType'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (BUSINESS_OWNERSHIP_TYPES.includes(data?.businessType)),
+  { message: 'Invalid business type', path: ['businessType'] }
 )
 .refine(
   data => data.profession !== 'Business' || (data.industry?.trim() !== ''),

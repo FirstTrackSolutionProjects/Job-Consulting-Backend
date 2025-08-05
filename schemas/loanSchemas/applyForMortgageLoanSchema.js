@@ -121,11 +121,11 @@ const mortgageLoanSchema = z.object({
   permanentAddress: z.string({
     error: issue =>
       issue.input === undefined
-        ? 'Permanent address is required'
+        ? undefined
         : issue.code === 'invalid_type'
         ? 'Permanent address must be string'
         : undefined
-  }).min(5, { error: 'Permanent address must be at least 5 characters' }),
+  }).optional(),
   aadhaar: z.string({
     error: issue =>
       issue.input === undefined
@@ -159,11 +159,11 @@ const mortgageLoanSchema = z.object({
   businessYears: z.coerce.number({
     error: issue =>
       issue.input === undefined
-        ? 'Business years is required'
+        ? undefined
         : issue.code === 'invalid_type'
         ? 'Business years must be number'
         : undefined
-  }).min(1, { error: 'Business years must be at least 1 year' }).optional(),
+  }).optional(),
   businessannualturnover: z.coerce.number({
     error: issue =>
       issue.input === undefined
@@ -171,7 +171,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Business annual turnover must be number'
         : undefined
-  }).min(1000, { error: 'Business annual turnover must be at least 1000' }).optional(),
+  }).optional(),
   businessAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business address must be string' : undefined }).optional(),
   businessState: z.string({
     error: issue =>
@@ -180,7 +180,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Business State must be string'
         : undefined
-  }).min(2, { error: 'Business State must be at least 2 characters' }).optional(),
+  }).optional(),
   businessCity: z.string({
     error: issue =>
       issue.input === undefined
@@ -188,7 +188,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Business City must be string'
         : undefined
-  }).min(2, { error: 'Business City must be at least 2 characters' }).optional(),
+  }).optional(),
   businessPincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business pincode must be string' : undefined }).optional(),
   businessCountry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business country must be string' : undefined }).optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
@@ -199,15 +199,8 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Job years must be a number'
         : undefined
-  }).min(1, { error: 'Job years must be at least 1 year' }).optional(),
-  monthlyIncome: z.coerce.number({
-    error: issue =>
-      issue.input === undefined
-        ? 'Monthly income is required'
-        : issue.code === 'invalid_type'
-        ? 'Monthly income must be a number'
-        : undefined
-  }).min(1000, { error: 'Monthly income must be at least ₹1000' }).optional(),
+  }).optional(),
+  monthlyIncome: z.coerce.number({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Monthly income must be number' : undefined }).optional(),
   officeAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office address must be string' : undefined }).optional(),
   officeState: z.string({
     error: issue =>
@@ -216,7 +209,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Office State must be string'
         : undefined
-  }).min(2, { error: 'Office State must be at least 2 characters' }).optional(),
+  }).optional(),
   officeCity: z.string({
     error: issue =>
       issue.input === undefined
@@ -224,7 +217,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Office City must be string'
         : undefined
-  }).min(2, { error: 'Office City must be at least 2 characters' }).optional(),
+  }).optional(),
   officePincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office pincode must be string' : undefined }).optional(),
   officeCountry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office country must be string' : undefined }).optional(),
   mortgageProperty: z.string({
@@ -325,7 +318,7 @@ const mortgageLoanSchema = z.object({
   { message: 'Children count is required for married applicants', path: ['childrenCount'] }
 )
 .refine(
-  data => !data.sameAsPresentAddress || (data.permanentAddress && data.permanentAddress.trim() !== ''),
+  data => data.sameAsPresentAddress === true || (data.permanentAddress?.trim() !== ''),
   { message: 'Permanent address is required when not same as present address', path: ['permanentAddress'] }
 )
 .refine(
@@ -410,7 +403,7 @@ const mortgageLoanSchema = z.object({
 )
 .refine(
   data => data.profession !== 'Service' || (data.monthlyIncome !== undefined && data.monthlyIncome >= 1000),
-  { message: 'Monthly income is required for service applicants', path: ['monthlyIncome'] }
+  { message: 'Monthly Income must be at least ₹1000', path: ['monthlyIncome'] }
 )
 .refine(
   data => data.profession !== 'Service' || (data.officeAddress && data.officeAddress.trim() !== ''),

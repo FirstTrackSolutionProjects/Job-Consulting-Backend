@@ -12,7 +12,7 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence,
     presentAddress, landmark, city, state, pincode, country,
-    permanentAddress, aadhar, pan,
+    sameAsPresentAddress, permanentAddress, aadhaar, pan,
     profession, professionType,
     // Business fields
     organizationType, businessType, industry, businessName, businessYears, businessannualturnover,
@@ -25,11 +25,10 @@ const generateEmailHTMLTemplate = (data) => {
     // Bank details
     accountHolderName, bankName, accountNumber, ifsc,
     // File fields
-    photo, aadharFile, panFile, bankProof, incomeproof,
+    photo, aadhaarFile, panFile, bankProof, incomeproof,
     companypan, companytan, cin, gst, msme,
     tradeLicense, foodLicense, drugLicense, electricityBill,
-    rentagreement, deedagreement,
-    bankStatementsCurrent, bankStatementsCurrentYear1, bankStatementsCCYear1,
+    rentagreement, deedagreement, bankStatementsCurrent,
     itr1, itr2, itr3, computation1, computation2, computation3
   } = data;
 
@@ -75,33 +74,36 @@ const generateEmailHTMLTemplate = (data) => {
     if (profession !== 'Business') return '';
     
     let businessFiles = `
-      ${row('Company PAN', companypan, true)}
-      ${row('Company TAN', companytan, true)}
-      ${row('CIN', cin, true)}
       ${row('GST Certificate', gst, true)}
-      ${row('MSME Certificate', msme, true)}
+      ${row('MSME/Udyam Certificate', msme, true)}
+      ${row('Electricity Bill', electricityBill, true)}
       ${row('Trade License', tradeLicense, true)}
       ${row('Food License', foodLicense, true)}
       ${row('Drug License', drugLicense, true)}
-      ${row('Electricity Bill', electricityBill, true)}
-      ${row('Bank Statement (Current)', bankStatementsCurrent, true)}
-      ${row('Bank Statement (Current Year)', bankStatementsCurrentYear1, true)}
-      ${row('Bank Statement (CC Year)', bankStatementsCCYear1, true)}
-      ${row('ITR Year 1', itr1, true)}
-      ${row('ITR Year 2', itr2, true)}
-      ${row('ITR Year 3', itr3, true)}
-      ${row('Computation Year 1', computation1, true)}
-      ${row('Computation Year 2', computation2, true)}
-      ${row('Computation Year 3', computation3, true)}
+      ${row('1 Year Bank Statements (CA)', bankStatementsCurrent, true)}
+      ${row('ITR - Year 1', itr1, true)}
+      ${row('ITR - Year 2', itr2, true)}
+      ${row('ITR - Year 3', itr3, true)}
+      ${row('Computation - Year 1', computation1, true)}
+      ${row('Computation - Year 2', computation2, true)}
+      ${row('Computation - Year 3', computation3, true)}
     `;
 
     // Conditional files based on business type and organization type
-    if (businessType === 'rented') {
+    if (businessType === 'Rented') {
       businessFiles += `${row('Rent Agreement', rentagreement, true)}`;
     }
 
-    if (organizationType === 'partnership') {
-      businessFiles += `${row('Partnership Deed Agreement', deedagreement, true)}`;
+    if (organizationType === 'Private Limited') {
+      businessFiles += `
+        ${row('Company Identification Number (CIN)', cin, true)}
+        ${row('Company PAN', companypan, true)}
+        ${row('Company TAN', companytan, true)}
+      `;
+    }
+
+    if (organizationType === 'Partnership') {
+      businessFiles += `${row('Partnership Deed', deedagreement, true)}`;
     }
 
     return businessFiles;
@@ -110,7 +112,7 @@ const generateEmailHTMLTemplate = (data) => {
   // Service-specific files
   const renderServiceFiles = () => {
     if (profession !== 'Service') return '';
-    return `${row('Income Proof', incomeproof, true)}`;
+    return `${row('Salary Slip (Last 3 Months)', incomeproof, true)}`;
   };
 
   return `
@@ -133,11 +135,11 @@ const generateEmailHTMLTemplate = (data) => {
 
         <tr><td colspan="2"><strong>Address Details</strong></td></tr>
         ${row('Residence Type', residence)}
-        ${row('Present Address', `${presentAddress}, ${landmark ? landmark + ', ' : ''}${city}, ${state} - ${pincode}, ${country}`)}
-        ${row('Permanent Address', permanentAddress)}
+        ${row('Present Address', `${presentAddress}${landmark ? ', ' + landmark : ''}, ${city}, ${state} - ${pincode}, ${country}`)}
+        ${!sameAsPresentAddress ? row('Permanent Address', permanentAddress) : ''}
 
         <tr><td colspan="2"><strong>KYC Details</strong></td></tr>
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
 
         <tr><td colspan="2"><strong>Professional Details</strong></td></tr>
@@ -161,9 +163,9 @@ const generateEmailHTMLTemplate = (data) => {
 
         <tr><td colspan="2"><strong>Basic Documents</strong></td></tr>
         ${row('Photo', photo, true)}
-        ${row('Aadhaar File', aadharFile, true)}
-        ${row('PAN File', panFile, true)}
-        ${row('Bank Proof', bankProof, true)}
+        ${row('Aadhaar Card', aadhaarFile, true)}
+        ${row('PAN Card', panFile, true)}
+        ${row('Bank Statement', bankProof, true)}
 
         <tr><td colspan="2"><strong>Professional Documents</strong></td></tr>
         ${renderBusinessFiles()}

@@ -1,18 +1,15 @@
 const { z } = require('zod');
+const { TITLES, GENDERS, MARITAL_STATUS, RESIDENCE_OWNERSHIP_TYPES, MORTGAGE_LOAN_COUNTRIES, MORTGAGE_LOAN_STD_CODES, MORTGAGE_LOAN_PROFESSIONS, BUSINESS_PROFESSION_TYPES, SERVICE_PROFESSION_TYPES, BUSINESS_ORGANIZATION_TYPES, BUSINESS_OWNERSHIP_TYPES } = require('../../constants');
 
 // Unique Enums for Mortgage Loan
-const MortgageLoanTitleEnum = z.enum(['Mr', 'Mrs', 'Miss', 'Dr'], { error: 'Title is required' });
-const MortgageLoanGenderEnum = z.enum(['Male', 'Female'], { error: 'Gender is required' });
-const MortgageLoanMaritalStatusEnum = z.enum(['Unmarried', 'Married', 'Single'], { error: 'Marital status is required' });
-const MortgageLoanResidenceEnum = z.enum(['Own', 'Rented'], { error: 'Residence type is required' });
-const MortgageLoanCountryEnum = z.enum(['India'], { error: 'Country is required' });
-const MortgageLoanBusinessTypeEnum = z.enum(['own', 'rented'], { error: 'Business type is required' });
-const MortgageLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
-const MortgageLoanStdCodeEnum = z.enum(['+91'], { error: 'STD code is required' });
-const MortgageLoanAltStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const MortgageLoanProfessionEnum = z.enum(['Business', 'Service', 'None'], { error: 'Profession is required' });
-const MortgageLoanProfessionTypeBusinessEnum = z.enum(['Retail', 'Manufacturing', 'Freelancer', 'Other'], { error: 'Profession type is required' });
-const MortgageLoanProfessionTypeServiceEnum = z.enum(['Private Job', 'Government Job', 'Other'], { error: 'Service type is required' });
+const MortgageLoanTitleEnum = z.enum(TITLES, { error: 'Title is required' });
+const MortgageLoanGenderEnum = z.enum(GENDERS, { error: 'Gender is required' });
+const MortgageLoanMaritalStatusEnum = z.enum(MARITAL_STATUS, { error: 'Marital status is required' });
+const MortgageLoanResidenceEnum = z.enum(RESIDENCE_OWNERSHIP_TYPES, { error: 'Residence type is required' });
+const MortgageLoanCountryEnum = z.enum(MORTGAGE_LOAN_COUNTRIES, { error: 'Country is required' });
+const MortgageLoanStdCodeEnum = z.enum(MORTGAGE_LOAN_STD_CODES, { error: 'STD code is required' });
+const MortgageLoanAltStdCodeEnum = z.enum(MORTGAGE_LOAN_STD_CODES, { error: 'STD code is required' });
+const MortgageLoanProfessionEnum = z.enum(MORTGAGE_LOAN_PROFESSIONS, { error: 'Profession is required' });
 
 const mortgageLoanSchema = z.object({
   title: MortgageLoanTitleEnum,
@@ -54,7 +51,14 @@ const mortgageLoanSchema = z.object({
   gender: MortgageLoanGenderEnum,
   maritalStatus: MortgageLoanMaritalStatusEnum,
   spouseName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Spouse name must be string' : undefined }).optional(),
-  childrenCount: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Children count must be string' : undefined }).optional(),
+  childrenCount: z.coerce.number({
+    error: issue =>
+      issue.input === undefined
+        ? 'Children count is required'
+        : issue.code === 'invalid_type'
+        ? 'Children count must be a number'
+        : undefined
+  }).min(0, { error: 'Children count cannot be negative' }).optional(),
   fatherName: z.string({
     error: issue =>
       issue.input === undefined
@@ -80,7 +84,14 @@ const mortgageLoanSchema = z.object({
         ? 'Present address must be string'
         : undefined
   }).min(5, { error: 'Present address must be at least 5 characters' }),
-  landmark: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Landmark must be string' : undefined }).optional(),
+  landmark: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'Landmark is required'
+        : issue.code === 'invalid_type'
+        ? 'Landmark must be string'
+        : undefined
+  }).min(3, { error: 'Landmark must be at least 3 characters' }),
   state: z.string({
     error: issue =>
       issue.input === undefined
@@ -106,6 +117,7 @@ const mortgageLoanSchema = z.object({
         : undefined
   }).regex(/^[1-9][0-9]{5}$/, { error: 'Enter a valid 6‑digit Indian pincode' }),
   country: MortgageLoanCountryEnum,
+  sameAsPresentAddress: z.boolean({ error: 'This field is required' }),
   permanentAddress: z.string({
     error: issue =>
       issue.input === undefined
@@ -114,7 +126,7 @@ const mortgageLoanSchema = z.object({
         ? 'Permanent address must be string'
         : undefined
   }).min(5, { error: 'Permanent address must be at least 5 characters' }),
-  aadhar: z.string({
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -132,12 +144,34 @@ const mortgageLoanSchema = z.object({
   }).regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, { error: 'Invalid PAN format' }),
   profession: MortgageLoanProfessionEnum,
   professionType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Profession type must be string' : undefined }).optional(),
-  organizationType: MortgageLoanOrgTypeEnum.optional(),
-  businessType: MortgageLoanBusinessTypeEnum.optional(),
+  organizationType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Organization type must be string' : undefined }).optional(),
+  businessType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business type must be string' : undefined }).optional(),
+  industry: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'Industry is required'
+        : issue.code === 'invalid_type'
+        ? 'Industry must be string'
+        : undefined
+  }).min(3, { error: 'Industry must be at least 3 characters' }).optional(),
   industry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Industry must be string' : undefined }).optional(),
   businessName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business name must be string' : undefined }).optional(),
-  businessYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business years must be string' : undefined }).optional(),
-  businessannualturnover: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business annual turnover must be string' : undefined }).optional(),
+  businessYears: z.coerce.number({
+    error: issue =>
+      issue.input === undefined
+        ? 'Business years is required'
+        : issue.code === 'invalid_type'
+        ? 'Business years must be number'
+        : undefined
+  }).min(1, { error: 'Business years must be at least 1 year' }).optional(),
+  businessannualturnover: z.coerce.number({
+    error: issue =>
+      issue.input === undefined
+        ? 'Business annual turnover is required'
+        : issue.code === 'invalid_type'
+        ? 'Business annual turnover must be number'
+        : undefined
+  }).min(1000, { error: 'Business annual turnover must be at least 1000' }).optional(),
   businessAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business address must be string' : undefined }).optional(),
   businessState: z.string({
     error: issue =>
@@ -156,10 +190,24 @@ const mortgageLoanSchema = z.object({
         : undefined
   }).min(2, { error: 'Business City must be at least 2 characters' }).optional(),
   businessPincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business pincode must be string' : undefined }).optional(),
-  businessCountry: MortgageLoanCountryEnum.optional(),
+  businessCountry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business country must be string' : undefined }).optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
-  jobYears: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Job years must be string' : undefined }).optional(),
-  monthlyIncome: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Monthly income must be string' : undefined }).optional(),
+  jobYears: z.coerce.number({
+    error: issue =>
+      issue.input === undefined
+        ? 'Job years is required'
+        : issue.code === 'invalid_type'
+        ? 'Job years must be a number'
+        : undefined
+  }).min(1, { error: 'Job years must be at least 1 year' }).optional(),
+  monthlyIncome: z.coerce.number({
+    error: issue =>
+      issue.input === undefined
+        ? 'Monthly income is required'
+        : issue.code === 'invalid_type'
+        ? 'Monthly income must be a number'
+        : undefined
+  }).min(1000, { error: 'Monthly income must be at least ₹1000' }).optional(),
   officeAddress: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office address must be string' : undefined }).optional(),
   officeState: z.string({
     error: issue =>
@@ -178,7 +226,7 @@ const mortgageLoanSchema = z.object({
         : undefined
   }).min(2, { error: 'Office City must be at least 2 characters' }).optional(),
   officePincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office pincode must be string' : undefined }).optional(),
-  officeCountry: MortgageLoanCountryEnum.optional(),
+  officeCountry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Office country must be string' : undefined }).optional(),
   mortgageProperty: z.string({
     error: issue =>
       issue.input === undefined
@@ -210,7 +258,7 @@ const mortgageLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Purpose must be string'
         : undefined
-  }).min(3, { error: 'Purpose must be at least 3 characters' }),
+  }).min(5, { error: 'Purpose must be at least 5 characters' }).max(200, { error: 'Purpose must be less than 200 characters' }),
   accountHolderName: z.string({
     error: issue =>
       issue.input === undefined
@@ -245,7 +293,7 @@ const mortgageLoanSchema = z.object({
   }).min(5, { error: 'IFSC code must be at least 5 characters' }),
   // File fields
   photo: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Photo must be string' : undefined }).optional(),
-  aadharFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),
+  aadhaarFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),
   panFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'PAN file must be string' : undefined }).optional(),
   bankProof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank proof must be string' : undefined }).optional(),
   incomeproof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Income proof must be string' : undefined }).optional(),
@@ -261,8 +309,6 @@ const mortgageLoanSchema = z.object({
   rentagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Rent agreement must be string' : undefined }).optional(),
   deedagreement: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Deed agreement must be string' : undefined }).optional(),
   bankStatementsCurrent: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statements (current) must be string' : undefined }).optional(),
-  bankStatementsCurrentYear1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statement (current year) must be string' : undefined }).optional(),
-  bankStatementsCCYear1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank statement (CC year) must be string' : undefined }).optional(),
   itr1: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 1 must be string' : undefined }).optional(),
   itr2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 2 must be string' : undefined }).optional(),
   itr3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'ITR 3 must be string' : undefined }).optional(),
@@ -270,19 +316,25 @@ const mortgageLoanSchema = z.object({
   computation2: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation 2 must be string' : undefined }).optional(),
   computation3: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Computation 3 must be string' : undefined }).optional(),
 })
-// Marital status logic
 .refine(
-  data => data.maritalStatus !== 'Married' || (data.spouseName?.trim() !== ''),
+  data => data.maritalStatus !== 'Married' || (data.spouseName && data.spouseName.trim() !== ''),
   { message: 'Spouse name is required for married applicants', path: ['spouseName'] }
 )
 .refine(
-  data => data.maritalStatus !== 'Married' || (/^\d+$/.test(data.childrenCount?.trim() || '')),
+  data => data.maritalStatus !== 'Married' || (data.childrenCount !== undefined && data.childrenCount >= 0),
   { message: 'Children count is required for married applicants', path: ['childrenCount'] }
 )
-// Business section required fields
 .refine(
-  data => data.profession !== 'Business' || (data.professionType?.trim() !== ''),
+  data => !data.sameAsPresentAddress || (data.permanentAddress && data.permanentAddress.trim() !== ''),
+  { message: 'Permanent address is required when not same as present address', path: ['permanentAddress'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (data.professionType && data.professionType.trim() !== ''),
   { message: 'Profession type is required for business applicants', path: ['professionType'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (BUSINESS_PROFESSION_TYPES.includes(data?.professionType)),
+  { message: 'Invalid profession type for business applicants', path: ['professionType'] }
 )
 .refine(
   data => data.profession !== 'Business' || (data.organizationType !== undefined && data.organizationType !== ''),
@@ -293,82 +345,103 @@ const mortgageLoanSchema = z.object({
   { message: 'Business type is required for business applicants', path: ['businessType'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessName?.trim() !== ''),
+  data => data.profession !== 'Business' || (BUSINESS_OWNERSHIP_TYPES.includes(data?.businessType)),
+  { message: 'Invalid business type', path: ['businessType'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (data.industry && data.industry.trim() !== ''),
+  { message: 'Industry is required for business applicants', path: ['industry'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (data.businessName && data.businessName.trim() !== ''),
   { message: 'Business name is required for business applicants', path: ['businessName'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessYears?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessYears !== undefined && data.businessYears >= 1),
   { message: 'Business years is required for business applicants', path: ['businessYears'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessannualturnover?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessannualturnover !== undefined && data.businessannualturnover >= 1000),
   { message: 'Business annual turnover is required for business applicants', path: ['businessannualturnover'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessAddress?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessAddress && data.businessAddress.trim() !== ''),
   { message: 'Business address is required for business applicants', path: ['businessAddress'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessCity?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessCity && data.businessCity.trim() !== ''),
   { message: 'Business city is required for business applicants', path: ['businessCity'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessPincode?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessPincode && data.businessPincode.trim() !== ''),
   { message: 'Business pincode is required for business applicants', path: ['businessPincode'] }
 )
 .refine(
-  data => data.profession !== 'Business' || (data.businessState?.trim() !== ''),
+  data => data.profession !== 'Business' || (data.businessState && data.businessState.trim() !== ''),
   { message: 'Business state is required for business applicants', path: ['businessState'] }
 )
 .refine(
   data => data.profession !== 'Business' || (data.businessCountry !== undefined && data.businessCountry !== ''),
   { message: 'Business country is required for business applicants', path: ['businessCountry'] }
 )
-// Service section required fields
 .refine(
-  data => data.profession !== 'Service' || (data.professionType?.trim() !== ''),
+  data => (data.profession !== 'Business') || (MORTGAGE_LOAN_COUNTRIES.includes(data?.businessCountry)),
+  { message: 'Invalid Business country!', path: ['businessCountry'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (data.organizationType !== undefined && data.organizationType !== ''),
+  { message: 'Organization type is required for business applicants', path: ['organizationType'] }
+)
+.refine(
+  data => data.profession !== 'Business' || (BUSINESS_ORGANIZATION_TYPES.includes(data?.organizationType)),
+  { message: 'Invalid organization type', path: ['organizationType'] }
+)
+.refine(
+  data => data.profession !== 'Service' || (data.professionType && data.professionType.trim() !== ''),
   { message: 'Profession type is required for service applicants', path: ['professionType'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.companyName?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.companyName && data.companyName.trim() !== ''),
   { message: 'Company name is required for service applicants', path: ['companyName'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.jobYears?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.jobYears !== undefined && data.jobYears >= 1),
   { message: 'Job years is required for service applicants', path: ['jobYears'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.monthlyIncome?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.monthlyIncome !== undefined && data.monthlyIncome >= 1000),
   { message: 'Monthly income is required for service applicants', path: ['monthlyIncome'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.officeAddress?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.officeAddress && data.officeAddress.trim() !== ''),
   { message: 'Office address is required for service applicants', path: ['officeAddress'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.officeCity?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.officeCity && data.officeCity.trim() !== ''),
   { message: 'Office city is required for service applicants', path: ['officeCity'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.officePincode?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.officePincode && data.officePincode.trim() !== ''),
   { message: 'Office pincode is required for service applicants', path: ['officePincode'] }
 )
 .refine(
-  data => data.profession !== 'Service' || (data.officeState?.trim() !== ''),
+  data => data.profession !== 'Service' || (data.officeState && data.officeState.trim() !== ''),
   { message: 'Office state is required for service applicants', path: ['officeState'] }
 )
 .refine(
   data => data.profession !== 'Service' || (data.officeCountry !== undefined && data.officeCountry !== ''),
-  { message: 'Office country is required for service applicants', path: ['officeCountry'] }
+  { message: 'Office country is required for service applicants', path: ['businessCountry'] }
 )
-// Partnership deed required if organizationType is partnership
 .refine(
-  data => data.organizationType !== 'partnership' || (data.deedagreement?.trim() !== ''),
+  data => (data.profession !== 'Service') || (MORTGAGE_LOAN_COUNTRIES.includes(data?.officeCountry)),
+  { message: 'Invalid Office country!', path: ['officeCountry'] }
+)
+.refine(
+  data => data.organizationType !== 'Partnership' || (data.deedagreement && data.deedagreement.trim() !== ''),
   { message: 'Partnership deed agreement is required for partnership organizations', path: ['deedagreement'] }
 )
-// Rent agreement required if businessType is rented
 .refine(
-  data => data.businessType !== 'rented' || (data.rentagreement?.trim() !== ''),
+  data => data.businessType !== 'Rented' || (data.rentagreement && data.rentagreement.trim() !== ''),
   { message: 'Rent agreement is required for rented business type', path: ['rentagreement'] }
 );
 

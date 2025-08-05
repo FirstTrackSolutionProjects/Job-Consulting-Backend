@@ -112,7 +112,7 @@ const usedCarLoanSchema = z.object({
         : issue.code === 'invalid_type'
         ? 'Pincode must be string'
         : undefined
-  }).regex(/^[1-9][0-9]{5}$/, { error: 'Enter a valid 6‑digit Indian pincode' }),
+  }).regex(/^[1-9][0-9]{5}$/, { error: 'Enter a valid 6-digit Indian pincode' }),
   country: UsedCarLoanCountryEnum,
   sameAsPresentAddress: z.boolean({ error: 'This field is required' }),
   permanentAddress: z.string({
@@ -141,7 +141,7 @@ const usedCarLoanSchema = z.object({
   }).regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, { error: 'Invalid PAN format' }),
   profession: UsedCarLoanProfessionEnum,
   professionType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Profession type must be string' : undefined }).optional(),
-  organizationType: UsedCarLoanOrganizationTypeEnum.optional(),
+  organizationType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Organization type must be string' : undefined }).optional(),
   businessType: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business type must be string' : undefined }).optional(),
   industry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Industry must be string' : undefined }).optional(),
   businessName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business name must be string' : undefined }).optional(),
@@ -151,7 +151,7 @@ const usedCarLoanSchema = z.object({
   businessCity: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business city must be string' : undefined }).optional(),
   businessPincode: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business pincode must be string' : undefined }).optional(),
   businessState: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business state must be string' : undefined }).optional(),
-  businessCountry: UsedCarLoanCountryEnum.optional(),
+  businessCountry: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Business country must be string' : undefined }).optional(),
   companyName: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Company name must be string' : undefined }).optional(),
   jobYears: z.coerce.number({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Job years must be number' : undefined }).optional(),
   monthlyIncome: z.coerce.number({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Monthly income must be number' : undefined }).optional(),
@@ -287,6 +287,10 @@ const usedCarLoanSchema = z.object({
   { message: 'Organization type is required for business applicants', path: ['organizationType'] }
 )
 .refine(
+  data => data.profession !== 'Business' || (BUSINESS_ORGANIZATION_TYPES.includes(data?.organizationType)),
+  { message: 'Invalid organization type', path: ['organizationType'] }
+)
+.refine(
   data => data.profession !== 'Business' || (data.businessType !== undefined && data.businessType !== ''),
   { message: 'Business type is required for business applicants', path: ['businessType'] }
 )
@@ -348,6 +352,10 @@ const usedCarLoanSchema = z.object({
   data => data.profession !== 'Business' || (data.businessCountry !== undefined && data.businessCountry !== ''),
   { message: 'Business country is required for business applicants', path: ['businessCountry'] }
 )
+.refine(
+  data => (data.profession !== 'Business') || (USED_CAR_LOAN_COUNTRIES.includes(data?.businessCountry)),
+  { message: 'Invalid Business country!', path: ['businessCountry'] }
+)
 // Service section required fields
 .refine(
   data => data.profession !== 'Service' || (data.professionType?.trim() !== ''),
@@ -383,7 +391,7 @@ const usedCarLoanSchema = z.object({
 )
 .refine(
   data => (data.profession !== 'Service') || (USED_CAR_LOAN_COUNTRIES.includes(data?.officeCountry)),
-  { message: 'Office country is required for service applicants', path: ['officeCountry'] }
+  { message: 'Invalid Office country!', path: ['officeCountry'] }
 )
 // Business document requirements
 .refine(

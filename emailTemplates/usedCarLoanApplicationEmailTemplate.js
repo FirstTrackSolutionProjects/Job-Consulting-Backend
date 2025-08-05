@@ -12,7 +12,7 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence,
     presentAddress, landmark, city, state, pincode, country,
-    permanentAddress, aadhar, pan,
+    permanentAddress, aadhaar, pan,
     profession, professionType,
     // Business fields
     organizationType, businessType, industry, businessName, businessYears, businessannualturnover,
@@ -26,12 +26,12 @@ const generateEmailHTMLTemplate = (data) => {
     // Bank details
     accountHolderName, bankName, accountNumber, ifsc,
     // Basic files
-    photo, aadharFile, panFile, bankProof, quotations, incomeproof,
+    photo, aadhaarFile, panFile, bankProof, quotations, incomeproof,
     // Business files
     gst, msme, cin, companypan, companytan, electricityBill,
     rentagreement, tradeLicense, foodLicense, drugLicense,
-    bankStatementsCurrentYear1, bankStatementsCCYear1, bankStatementsCurrent,
-    deedagreement, itr1, itr2, itr3, computation1, computation2, computation3
+    bankStatementsCurrent, deedagreement, itr1, itr2, itr3, 
+    computation1, computation2, computation3
   } = data;
 
   const row = (label, value, isFile = false) => {
@@ -77,41 +77,43 @@ const generateEmailHTMLTemplate = (data) => {
     
     let businessFiles = `
       ${row('GST Certificate', gst, true)}
-      ${row('MSME Certificate', msme, true)}
-      ${row('CIN', cin, true)}
-      ${row('Company PAN', companypan, true)}
-      ${row('Company TAN', companytan, true)}
+      ${row('MSME/Udyam Certificate', msme, true)}
       ${row('Electricity Bill', electricityBill, true)}
       ${row('Trade License', tradeLicense, true)}
       ${row('Food License', foodLicense, true)}
       ${row('Drug License', drugLicense, true)}
-      ${row('Bank Statement (Current)', bankStatementsCurrent, true)}
-      ${row('Bank Statement (Current Year)', bankStatementsCurrentYear1, true)}
-      ${row('Bank Statement (CC Year)', bankStatementsCCYear1, true)}
-      ${row('ITR Year 1', itr1, true)}
-      ${row('ITR Year 2', itr2, true)}
-      ${row('ITR Year 3', itr3, true)}
-      ${row('Computation Year 1', computation1, true)}
-      ${row('Computation Year 2', computation2, true)}
-      ${row('Computation Year 3', computation3, true)}
+      ${row('1 Year Bank Statements (CA)', bankStatementsCurrent, true)}
+      ${row('ITR - Year 1', itr1, true)}
+      ${row('ITR - Year 2', itr2, true)}
+      ${row('ITR - Year 3', itr3, true)}
+      ${row('Computation - Year 1', computation1, true)}
+      ${row('Computation - Year 2', computation2, true)}
+      ${row('Computation - Year 3', computation3, true)}
     `;
 
     // Conditional files based on business type and organization type
-    if (businessType === 'rented') {
+    if (businessType === 'Rented') {
       businessFiles += `${row('Rent Agreement', rentagreement, true)}`;
     }
 
-    if (organizationType === 'partnership') {
-      businessFiles += `${row('Partnership Deed Agreement', deedagreement, true)}`;
+    if (organizationType === 'Private Limited') {
+      businessFiles += `
+        ${row('Company Identification Number (CIN)', cin, true)}
+        ${row('Company PAN', companypan, true)}
+        ${row('Company TAN', companytan, true)}
+      `;
+    }
+
+    if (organizationType === 'Partnership') {
+      businessFiles += `${row('Partnership Deed', deedagreement, true)}`;
     }
 
     return businessFiles;
   };
-
   // Service-specific files
   const renderServiceFiles = () => {
     if (profession !== 'Service') return '';
-    return `${row('Income Proof', incomeproof, true)}`;
+    return `${row('Salary Slip (Last 3 Months)', incomeproof, true)}`;
   };
 
   return `
@@ -138,7 +140,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Permanent Address', permanentAddress)}
 
         <tr><td colspan="2"><strong>KYC Details</strong></td></tr>
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
 
         <tr><td colspan="2"><strong>Professional Details</strong></td></tr>
@@ -163,10 +165,10 @@ const generateEmailHTMLTemplate = (data) => {
 
         <tr><td colspan="2"><strong>Basic Documents</strong></td></tr>
         ${row('Photo', photo, true)}
-        ${row('Aadhaar File', aadharFile, true)}
-        ${row('PAN File', panFile, true)}
-        ${row('Bank Proof', bankProof, true)}
-        ${row('Car Quotations', quotations, true)}
+        ${row('Aadhaar Card', aadhaarFile, true)}
+        ${row('PAN Card', panFile, true)}
+        ${row('Bank Statement', bankProof, true)}
+        ${row('Quotations', quotations, true)}
 
         <tr><td colspan="2"><strong>Professional Documents</strong></td></tr>
         ${renderBusinessFiles()}

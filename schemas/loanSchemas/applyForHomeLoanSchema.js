@@ -6,10 +6,14 @@ const HomeLoanGenderEnum = z.enum(['Male', 'Female', 'Other'], { error: 'Gender 
 const HomeLoanMaritalStatusEnum = z.enum(['Unmarried', 'Married', 'Single'], { error: 'Marital status is required' });
 const HomeLoanResidenceEnum = z.enum(['Own', 'Rented'], { error: 'Residence type is required' });
 const HomeLoanCountryEnum = z.enum(['India', 'USA', 'UK', 'Canada', 'Australia', 'Other'], { error: 'Country is required' });
-const HomeLoanBusinessTypeEnum = z.enum(['Owned', 'Rented'], { error: 'Business type is required' });
+const HomeLoanBusinessTypeEnum = z.enum(['Own', 'Rented'], { error: 'Business type is required' });
 const HomeLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
 const HomeLoanStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-// For state/city enums, you may want to fill with actual options from your UI
+const HomeLoanAltStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
+const HomeLoanProfessionEnum = z.enum(['Business', 'Service'], { error: 'Profession is required' });
+const HomeLoanProfessionTypeBusinessEnum = z.enum(['Retail', 'Manufacturing', 'Freelancer', 'Other'], { error: 'Profession type is required' });
+const HomeLoanProfessionTypeServiceEnum = z.enum(['Private Job', 'Government Job', 'Other'], { error: 'Service type is required' });
+
 const homeLoanSchema = z.object({
   title: HomeLoanTitleEnum,
   fullName: z.string({
@@ -68,6 +72,15 @@ const homeLoanSchema = z.object({
         : undefined
   }).min(3, { error: "Mother's name must be at least 3 characters" }),
   residence: HomeLoanResidenceEnum,
+  presentAddress: z.string({
+    error: issue =>
+      issue.input === undefined
+        ? 'Present address is required'
+        : issue.code === 'invalid_type'
+        ? 'Present address must be string'
+        : undefined
+  }).min(5, { error: 'Present address must be at least 5 characters' }),
+  landmark: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Landmark must be string' : undefined }).optional(),
   state: z.string({
     error: issue =>
       issue.input === undefined
@@ -101,15 +114,8 @@ const homeLoanSchema = z.object({
         ? 'Permanent address must be string'
         : undefined
   }).min(5, { error: 'Permanent address must be at least 5 characters' }),
-  presentAddress: z.string({
-    error: issue =>
-      issue.input === undefined
-        ? 'Present address is required'
-        : issue.code === 'invalid_type'
-        ? 'Present address must be string'
-        : undefined
-  }).min(5, { error: 'Present address must be at least 5 characters' }),
-  aadhar: z.string({
+ 
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -133,14 +139,14 @@ const homeLoanSchema = z.object({
         ? 'Landmark must be string'
         : undefined
   }).min(2, { error: 'Landmark must be at least 2 characters' }),
-  income: z.coerce.number({
-    error: issue =>
-      issue.input === undefined
-        ? 'Income is required'
-        : issue.code === 'invalid_type'
-        ? 'Income must be a number'
-        : undefined
-  }).min(1000, { error: 'Income must be at least ₹1000' }),
+  // income: z.coerce.number({
+  //   error: issue =>
+  //     issue.input === undefined
+  //       ? 'Income is required'
+  //       : issue.code === 'invalid_type'
+  //       ? 'Income must be a number'
+  //       : undefined
+  // }).min(1000, { error: 'Income must be at least ₹1000' }),
   location: z.string({
     error: issue =>
       issue.input === undefined
@@ -380,7 +386,7 @@ const homeLoanSchema = z.object({
 // Partnership deed required if organizationType is partnership
 .refine(
   data => data.organizationType !== 'partnership' || (data.beedagreement?.trim() !== ''),
-  { message: 'Partnership deed agreement is required for partnership organizations', path: ['beedagreement'] }
+  { message: 'Partnership deed agreement is required for partnership organizations', path: ['deedagreement'] }
 )
 // Rent agreement required if businessType is rented
 .refine(

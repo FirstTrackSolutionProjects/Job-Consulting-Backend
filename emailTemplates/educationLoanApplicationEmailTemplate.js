@@ -31,9 +31,9 @@ const generateEmailHTMLTemplate = (data) => {
     accountHolderName, bankName, accountNumber, ifsc,
     
     // Academic qualifications
-    highestQualification, twelthStream, twelfthCollege, twelfthUniversity, twelfthPercent,
-    twelthCertificate, twelthMarksheet,
-    twelthclcCertificate,  graduationStream, graduationCollege, graduationUniversity, graduationCgpa,
+    highestQualification, twelfthStream, twelfthCollege, twelfthUniversity, twelfthPercent,
+    twelfthCertificate, twelfthMarksheet,
+    twelfthclcCertificate,  graduationStream, graduationCollege, graduationUniversity, graduationCgpa,
     graduationCertificate, graduationclcCertificate,
      postGradStream, postGradCollege, postGradUniversity, postGradCgpa,
      postGradCertificate, postGradclcCertificate,
@@ -104,13 +104,13 @@ const generateEmailHTMLTemplate = (data) => {
     let academicFiles = '';
     if (highestQualification === '12th') {
       academicFiles += `
-        ${row('12th Stream', twelthStream)}
+        ${row('12th Stream', twelfthStream)}
         ${row('12th College', twelfthCollege)}
         ${row('12th University', twelfthUniversity)}
         ${row('12th Percentage', `${twelfthPercent}%`)}
-        ${row('12th Certificate', twelthCertificate, true)}
-        ${row('12th Marksheet', twelthMarksheet, true)}
-        ${row('12th CLC Certificate', twelthclcCertificate, true)}
+        ${row('12th Certificate', twelfthCertificate, true)}
+        ${row('12th Marksheet', twelfthMarksheet, true)}
+        ${row('12th CLC Certificate', twelfthclcCertificate, true)}
       `;
   }
     if (highestQualification === 'Graduate') {

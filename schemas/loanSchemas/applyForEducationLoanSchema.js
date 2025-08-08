@@ -261,7 +261,7 @@ const educationLoanSchema = z.object({
         ? '12th marksheet must be string'
         : undefined
   }).min(1, { error: '12th marksheet is required' }),
-  twelthclcCertificate: z.string({
+  twelfthclcCertificate: z.string({
     error: issue =>
       issue.input === undefined
         ? '12th CLC certificate is required'
@@ -550,8 +550,8 @@ const educationLoanSchema = z.object({
   { message: '12th marksheet is required for 12th qualification', path: ['twelfthMarksheet'] }
 )
 .refine(
-  data => data.highestQualification !== '12th' || data.twelthclcCertificate,
-  { message: '12th CLC certificate is required for 12th qualification', path: ['twelthclcCertificate'] }
+  data => data.highestQualification !== '12th' || data.twelfthclcCertificate,
+  { message: '12th CLC certificate is required for 12th qualification', path: ['twelfthclcCertificate'] }
 )
 .refine (
   data => data.highestQualification !== 'Graduation' || data.graduationStream,

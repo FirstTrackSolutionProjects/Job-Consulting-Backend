@@ -20,7 +20,7 @@ const generateEmailHTMLTemplate = (data) => {
     guardianName, guardianStdCode, guardianPhone, guardianRelation, guardianOccupation,
     
     // Business fields
-    organizationType, businessType, industry, businessName, businessYears, businessannualTurnover,
+    organizationType, businessType, industry, businessName, businessYears, businessannualturnover,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
     
     // Service fields  
@@ -78,7 +78,7 @@ const generateEmailHTMLTemplate = (data) => {
       ${row('Industry', industry)}
       ${row('Business Name', businessName)}
       ${row('Years in Business', businessYears)}
-      ${row('Annual Turnover', `₹${businessannualTurnover}`)}
+      ${row('Annual Turnover', `₹${businessannualturnover}`)}
       ${row('Business Address', `${businessAddress}, ${businessCity}, ${businessState} - ${businessPincode}, ${businessCountry}`)}
     `;
   };

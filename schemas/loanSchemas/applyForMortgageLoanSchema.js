@@ -1,19 +1,15 @@
 const { z } = require('zod');
-
+const { TITLES, GENDERS, MARITAL_STATUS, RESIDENCE_OWNERSHIP_TYPES, MORTGAGE_LOAN_COUNTRIES, MORTGAGE_LOAN_STD_CODES, MORTGAGE_LOAN_PROFESSIONS, BUSINESS_PROFESSION_TYPES, SERVICE_PROFESSION_TYPES, BUSINESS_ORGANIZATION_TYPES, BUSINESS_OWNERSHIP_TYPES } = require('../../constants');
 
 // Unique Enums for Mortgage Loan
-const MortgageLoanTitleEnum = z.enum(['Mr', 'Mrs', 'Miss', 'Dr'], { error: 'Title is required' });
-const MortgageLoanGenderEnum = z.enum(['Male', 'Female'], { error: 'Gender is required' });
-const MortgageLoanMaritalStatusEnum = z.enum(['Unmarried', 'Married', 'Single'], { error: 'Marital status is required' });
-const MortgageLoanResidenceEnum = z.enum(['Own', 'Rented'], { error: 'Residence type is required' });
-const MortgageLoanCountryEnum = z.enum(['India'], { error: 'Country is required' });
-const MortgageLoanBusinessTypeEnum = z.enum(['own', 'rented'], { error: 'Business type is required' });
-const MortgageLoanOrgTypeEnum = z.enum(['proprietor', 'partnership', 'private_limited', 'other'], { error: 'Organization type is required' });
-const MortgageLoanStdCodeEnum = z.enum(['+91'], { error: 'STD code is required' });
-const MortgageLoanAltStdCodeEnum = z.enum(['+91', '+1', '+44'], { error: 'STD code is required' });
-const MortgageLoanProfessionEnum = z.enum(['Business', 'Service'], { error: 'Profession is required' });
-const MortgageLoanProfessionTypeBusinessEnum = z.enum(['Retail', 'Manufacturing', 'Freelancer', 'Other'], { error: 'Profession type is required' });
-const MortgageLoanProfessionTypeServiceEnum = z.enum(['Private Job', 'Government Job', 'Other'], { error: 'Service type is required' });
+const MortgageLoanTitleEnum = z.enum(TITLES, { error: 'Title is required' });
+const MortgageLoanGenderEnum = z.enum(GENDERS, { error: 'Gender is required' });
+const MortgageLoanMaritalStatusEnum = z.enum(MARITAL_STATUS, { error: 'Marital status is required' });
+const MortgageLoanResidenceEnum = z.enum(RESIDENCE_OWNERSHIP_TYPES, { error: 'Residence type is required' });
+const MortgageLoanCountryEnum = z.enum(MORTGAGE_LOAN_COUNTRIES, { error: 'Country is required' });
+const MortgageLoanStdCodeEnum = z.enum(MORTGAGE_LOAN_STD_CODES, { error: 'STD code is required' });
+const MortgageLoanAltStdCodeEnum = z.enum(MORTGAGE_LOAN_STD_CODES, { error: 'STD code is required' });
+const MortgageLoanProfessionEnum = z.enum(MORTGAGE_LOAN_PROFESSIONS, { error: 'Profession is required' });
 
 const mortgageLoanSchema = z.object({
   title: MortgageLoanTitleEnum,
@@ -425,7 +421,6 @@ const mortgageLoanSchema = z.object({
   data => data.profession !== 'Service' || (data.officeState && data.officeState.trim() !== ''),
   { message: 'Office state is required for service applicants', path: ['officeState'] }
 )
-
 .refine(
   data => data.profession !== 'Service' || (data.officeCountry !== undefined && data.officeCountry !== ''),
   { message: 'Office country is required for service applicants', path: ['businessCountry'] }

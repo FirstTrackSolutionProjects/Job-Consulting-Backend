@@ -12,54 +12,52 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence, landmark, permanentAddress, presentAddress,
     pincode, city, state, country,
-    aadhar, pan,
+    aadhaar, pan,
+    // Academic details
     studentName, courseName, institutionName, duration,
     loanAmount, purpose,
+    // Guardian details
     guardianName, guardianStdCode, guardianPhone, guardianRelation, guardianOccupation,
     
     // Business fields
-    organizationType, businessType, industry, businessName, businessYears, annualTurnover,
+    organizationType, businessType, industry, businessName, businessYears, businessannualTurnover,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
     
     // Service fields  
-    serviceType, designation, experience, monthlyIncome,
+    companyName, designation, experience, monthlyIncome,
     officeAddress, officeCity, officeState, officePincode, officeCountry,
-    
-    // Other occupation
-    occupationDescription, guardianLoanAmount,
     
     // Bank details
     accountHolderName, bankName, accountNumber, ifsc,
     
     // Academic qualifications
-    highestQualification,
-    tenthCertificate, tenthMarksheet, tenthPercent,
-    twelfthCertificate, twelfthMarksheet, twelfthPercent,
-    diplomaCertificate, diplomaCgpa,
-    graduationCertificate, graduationCgpa,
-    postGradCertificate, postGradCgpa,
-    phdCertificate, phdCgpa,
-    clcCertificate, appointmentLetter,
-    
+    highestQualification, twelthStream, twelfthCollege, twelfthUniversity, twelfthPercent,
+    twelthCertificate, twelthMarksheet,
+    twelthclcCertificate,  graduationStream, graduationCollege, graduationUniversity, graduationCgpa,
+    graduationCertificate, graduationclcCertificate,
+     postGradStream, postGradCollege, postGradUniversity, postGradCgpa,
+     postGradCertificate, postGradclcCertificate,
+
     // Basic document files
-    photoFile, aadharFile, panFile, bankProof,
+    photo, aadhaarFile, panFile, bankProof, incomeProof,
     
     // Guardian files
-    guardianphotoFile, guardianaadharFile, guardianpanFile,
+    guardianphoto, guardianaadhaar, guardianpan,
     
     // Business files
-    gstFile, msmeFile, electricityBillFile, rentAgreementFile,
-    companyPanFile, companyTanFile, cinFile, tradeLicenseFile, 
-    foodLicenseFile, drugLicenseFile, bankStatementsCurrentYear1, 
-    bankStatementsCCYear1, deedagreementFile,
-    itr1File, itr2File, itr3File,
-    computationFile1, computationFile2, computationFile3,
+    gst, msme, electricityBill, rentagreement,
+    companyPan, companyTan, cin, tradeLicense,
+    foodLicense, drugLicense, bankStatementsCurrent,
+    deedagreement,
+    itr1, itr2, itr3,
+    computation1, computation2, computation3,
+
     
-    // Service files
-    salarySlipFile,
+ 
+  
     
     // Other occupation files
-    loanAmountFile
+    // loanAmountFile
   } = data;
 
   const row = (label, value, isFile = false) => {
@@ -80,7 +78,7 @@ const generateEmailHTMLTemplate = (data) => {
       ${row('Industry', industry)}
       ${row('Business Name', businessName)}
       ${row('Years in Business', businessYears)}
-      ${row('Annual Turnover', `₹${annualTurnover}`)}
+      ${row('Annual Turnover', `₹${businessannualTurnover}`)}
       ${row('Business Address', `${businessAddress}, ${businessCity}, ${businessState} - ${businessPincode}, ${businessCountry}`)}
     `;
   };
@@ -89,8 +87,7 @@ const generateEmailHTMLTemplate = (data) => {
     if (guardianOccupation !== 'Service') return '';
     return `
       <tr><td colspan="2"><strong>Service Details</strong></td></tr>
-      ${row('Service Type', serviceType)}
-      ${row('Company/Organization', businessName)}
+      ${row('Company/Organization', companyName)}
       ${row('Designation', designation)}
       ${row('Years in Job', experience)}
       ${row('Monthly Income', `₹${monthlyIncome}`)}
@@ -98,58 +95,42 @@ const generateEmailHTMLTemplate = (data) => {
     `;
   };
 
-  const renderOtherOccupationDetails = () => {
-    if (guardianOccupation !== 'Other') return '';
-    return `
-      <tr><td colspan="2"><strong>Other Occupation Details</strong></td></tr>
-      ${row('Occupation Description', occupationDescription)}
-      ${row('Guardian Loan Amount', `₹${guardianLoanAmount}`)}
-    `;
-  };
+  
 
   // Academic qualification files based on highest qualification
   const renderAcademicFiles = () => {
     if (!highestQualification) return '';
-    
-    let academicFiles = `
-      ${row('10th Certificate', tenthCertificate, true)}
-      ${row('10th Marksheet', tenthMarksheet, true)}
-      ${row('10th Percentage', tenthPercent)}
-    `;
-
-    if (['12th', 'Diploma', 'Graduate', 'Post Graduate', 'PhD'].includes(highestQualification)) {
+   
+    let academicFiles = '';
+    if (highestQualification === '12th') {
       academicFiles += `
-        ${row('12th Certificate', twelfthCertificate, true)}
-        ${row('12th Marksheet', twelfthMarksheet, true)}
-        ${row('12th Percentage', twelfthPercent)}
+        ${row('12th Stream', twelthStream)}
+        ${row('12th College', twelfthCollege)}
+        ${row('12th University', twelfthUniversity)}
+        ${row('12th Percentage', `${twelfthPercent}%`)}
+        ${row('12th Certificate', twelthCertificate, true)}
+        ${row('12th Marksheet', twelthMarksheet, true)}
+        ${row('12th CLC Certificate', twelthclcCertificate, true)}
       `;
-    }
-
-    if (['Diploma', 'Graduate', 'Post Graduate', 'PhD'].includes(highestQualification)) {
+  }
+    if (highestQualification === 'Graduate') {
       academicFiles += `
-        ${row('Diploma Certificate', diplomaCertificate, true)}
-        ${row('Diploma CGPA', diplomaCgpa)}
-      `;
-    }
-
-    if (['Graduate', 'Post Graduate', 'PhD'].includes(highestQualification)) {
-      academicFiles += `
-        ${row('Graduation Certificate', graduationCertificate, true)}
+        ${row('Graduation Stream', graduationStream)}
+        ${row('Graduation College', graduationCollege)}
+        ${row('Graduation University', graduationUniversity)}
         ${row('Graduation CGPA', graduationCgpa)}
+        ${row('Graduation Certificate', graduationCertificate, true)}
+        ${row('Graduation CLC Certificate', graduationclcCertificate, true)}
       `;
     }
-
-    if (['Post Graduate', 'PhD'].includes(highestQualification)) {
+    if (highestQualification === 'Post Graduate') {
       academicFiles += `
-        ${row('Postgrad Certificate', postGradCertificate, true)}
-        ${row('Postgrad CGPA', postGradCgpa)}
-      `;
-    }
-
-    if (highestQualification === 'PhD') {
-      academicFiles += `
-        ${row('PhD Certificate', phdCertificate, true)}
-        ${row('PhD CGPA', phdCgpa)}
+        ${row('Post Graduate Stream', postGradStream)}
+        ${row('Post Graduate College', postGradCollege)}
+        ${row('Post Graduate University', postGradUniversity)}
+        ${row('Post Graduate CGPA', postGradCgpa)}
+        ${row('Post Graduate Certificate', postGradCertificate, true)}
+        ${row('Post Graduate CLC Certificate', postGradclcCertificate, true)}
       `;
     }
 
@@ -161,36 +142,36 @@ const generateEmailHTMLTemplate = (data) => {
     if (guardianOccupation !== 'Business') return '';
     
     let businessFiles = `
-      ${row('GST Certificate', gstFile, true)}
-      ${row('MSME/Udyam Certificate', msmeFile, true)}
-      ${row('Electricity Bill', electricityBillFile, true)}
-      ${row('ITR 1', itr1File, true)}
-      ${row('ITR 2', itr2File, true)}
-      ${row('ITR 3', itr3File, true)}
-      ${row('Computation 1', computationFile1, true)}
-      ${row('Computation 2', computationFile2, true)}
-      ${row('Computation 3', computationFile3, true)}
+      ${row('GST Certificate', gst, true)}
+      ${row('MSME/Udyam Certificate', msme, true)}
+      ${row('Electricity Bill', electricityBill, true)}
+      ${row('ITR 1', itr1, true)}
+      ${row('ITR 2', itr2, true)}
+      ${row('ITR 3', itr3, true)}
+      ${row('Computation 1', computation1, true)}
+      ${row('Computation 2', computation2, true)}
+      ${row('Computation 3', computation3, true)}
     `;
 
     if (businessType === 'Rented') {
-      businessFiles += `${row('Rent Agreement', rentAgreementFile, true)}`;
+      businessFiles += `${row('Rent Agreement', rentagreement, true)}`;
     }
 
     if (organizationType === 'Private Limited') {
       businessFiles += `
-        ${row('Company PAN', companyPanFile, true)}
-        ${row('Company TAN', companyTanFile, true)}
-        ${row('CIN', cinFile, true)}
-        ${row('Trade License', tradeLicenseFile, true)}
-        ${row('Food License', foodLicenseFile, true)}
-        ${row('Drug License', drugLicenseFile, true)}
-        ${row('Bank Statement (CA)', bankStatementsCurrentYear1, true)}
-        ${row('Bank Statement (CC)', bankStatementsCCYear1, true)}
+        ${row('Company PAN', companyPan, true)}
+        ${row('Company TAN', companyTan, true)}
+        ${row('CIN', cin, true)}
+        ${row('Trade License', tradeLicense, true)}
+        ${row('Food License', foodLicense, true)}
+        ${row('Drug License', drugLicense, true)}
+        ${row('Bank Statement (CA)', bankStatementsCurrent, true)}
+      
       `;
     }
 
     if (organizationType === 'Partnership') {
-      businessFiles += `${row('Deed Agreement', deedagreementFile, true)}`;
+      businessFiles += `${row('Deed Agreement', deedagreement, true)}`;
     }
 
     return businessFiles;
@@ -198,13 +179,9 @@ const generateEmailHTMLTemplate = (data) => {
 
   const renderServiceFiles = () => {
     if (guardianOccupation !== 'Service') return '';
-    return `${row('Salary Slip (Last 3 Months)', salarySlipFile, true)}`;
+    return `${row('Salary Slip (Last 3 Months)', incomeProof, true)}`;
   };
 
-  const renderOtherOccupationFiles = () => {
-    if (guardianOccupation !== 'Other') return '';
-    return `${row('Loan Amount Proof', loanAmountFile, true)}`;
-  };
 
   return `
   <div style="font-family: Arial, sans-serif; color: #333;">
@@ -231,7 +208,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Permanent Address', permanentAddress)}
 
         <tr><td colspan="2"><strong>KYC Details</strong></td></tr>
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
 
         <tr><td colspan="2"><strong>Academic Details</strong></td></tr>
@@ -249,7 +226,7 @@ const generateEmailHTMLTemplate = (data) => {
 
         ${renderBusinessDetails()}
         ${renderServiceDetails()}
-        ${renderOtherOccupationDetails()}
+     
 
         <tr><td colspan="2"><strong>Bank Details</strong></td></tr>
         ${row('Account Holder Name', accountHolderName)}
@@ -262,24 +239,24 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Purpose', purpose)}
 
         <tr><td colspan="2"><strong>Basic Documents</strong></td></tr>
-        ${row('Photo', photoFile, true)}
-        ${row('Aadhaar File', aadharFile, true)}
+        ${row('Photo', photo, true)}
+        ${row('Aadhaar File', aadhaarFile, true)}
         ${row('PAN File', panFile, true)}
         ${row('Bank Statement', bankProof, true)}
 
         <tr><td colspan="2"><strong>Academic Documents</strong></td></tr>
         ${renderAcademicFiles()}
-        ${row('CLC Certificate', clcCertificate, true)}
-        ${row('Appointment Letter', appointmentLetter, true)}
+       
+       
 
         <tr><td colspan="2"><strong>Guardian Documents</strong></td></tr>
-        ${row('Guardian Photo', guardianphotoFile, true)}
-        ${row('Guardian Aadhaar', guardianaadharFile, true)}
-        ${row('Guardian PAN', guardianpanFile, true)}
+        ${row('Guardian Photo', guardianphoto, true)}
+        ${row('Guardian Aadhaar', guardianaadhaar, true)}
+        ${row('Guardian PAN', guardianpan, true)}
         
         ${renderBusinessFiles()}
         ${renderServiceFiles()}
-        ${renderOtherOccupationFiles()}
+     
       </tbody>
     </table>
   </div>

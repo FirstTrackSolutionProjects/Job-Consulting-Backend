@@ -11,13 +11,13 @@ const generateEmailHTMLTemplate = (data) => {
     title, fullName, email, stdCode, phone, altStdCode, altPhone,
     dob, gender, maritalStatus, spouseName, childrenCount, fatherName,
     motherName, residence, presentAddress, landmark, city, state,
-    pincode, country, permanentAddress, aadhar, pan,
+    pincode, country, permanentAddress, aadhaar, pan,
     organizationType, industry, businessName, businessType,
     businessAddress, businessCity, businessState, businessPincode, businessCountry,
     turnover, years, loanAmount, purpose,
     accountHolderName, bankName, accountNumber, ifsc, bankProof,
     photo, officePhoto1, officePhoto2, officePhoto3, officePhoto4,
-    aadharFile, panFile, rentAgreement, gst, msme, electricityBill,
+    aadhaarFile, panFile, rentAgreement, gst, msme, electricityBill,
     cin, companyPan, companyTan, deedagreement,
     itr1, itr2, itr3, computation1, computation2, computation3
   } = data;
@@ -49,7 +49,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Residence Type', residence)}
         ${row('Present Address', `${presentAddress}, ${landmark}, ${city}, ${state} - ${pincode}, ${country}`)}
         ${row('Permanent Address', permanentAddress)}
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
 
         <tr><td colspan="2"><strong>Business Details</strong></td></tr>
@@ -83,7 +83,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Bank Proof', bankProof, true)}
 
         <tr><td colspan="2"><strong>Uploaded Files</strong></td></tr>
-        ${row('Aadhaar File', aadharFile, true)}
+        ${row('Aadhaar File', aadhaarFile, true)}
         ${row('PAN File', panFile, true)}
         ${row('Applicant Photo', photo, true)}
         ${row('Office Photo 1', officePhoto1, true)}

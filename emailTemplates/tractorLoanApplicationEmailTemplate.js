@@ -12,11 +12,11 @@ const generateEmailHTMLTemplate = (data) => {
     dob, gender, maritalStatus, spouseName, childrenCount,
     fatherName, motherName, residence,
     presentAddress, landmark, city, state, pincode, country,
-    permanentAddress, aadhar, pan,
+    permanentAddress, aadhaar, pan,
     tractorModel, tractorPrice, landSize,
     loanAmount, purpose,
     accountHolderName, bankName, accountNumber, ifsc, bankProof,
-    photo, aadharFile, panFile, quotations
+    photo, aadhaarFile, panFile, quotations
   } = data;
 
   const row = (label, value, isFile = false) => {
@@ -46,7 +46,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Residence Type', residence)}
         ${row('Present Address', `${presentAddress}, ${landmark}, ${city}, ${state} - ${pincode}, ${country}`)}
         ${row('Permanent Address', permanentAddress)}
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
 
         <tr><td colspan="2"><strong>Tractor & Land Details</strong></td></tr>
@@ -68,7 +68,7 @@ const generateEmailHTMLTemplate = (data) => {
 
         <tr><td colspan="2"><strong>Uploaded Files</strong></td></tr>
         ${row('Applicant Photo', photo, true)}
-        ${row('Aadhaar File', aadharFile, true)}
+        ${row('Aadhaar File', aadhaarFile, true)}
         ${row('PAN File', panFile, true)}
       </tbody>
     </table>

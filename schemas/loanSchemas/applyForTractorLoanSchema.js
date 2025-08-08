@@ -107,7 +107,7 @@ const tractorLoanSchema = z.object({
         ? 'Present address must be string'
         : undefined
   }).min(5, { error: 'Present address must be at least 5 characters' }),
-  aadhar: z.string({
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -197,7 +197,7 @@ const tractorLoanSchema = z.object({
   }).min(3, { error: 'Purpose must be at least 3 characters' }),
   bankProof: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Bank proof must be string' : undefined }).optional(),
   photo: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Photo must be string' : undefined }).optional(),
-  aadharFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),
+  aadhaarFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Aadhaar file must be string' : undefined }).optional(),
   panFile: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'PAN file must be string' : undefined }).optional(),
   quotations: z.string({ error: issue => issue.input === undefined ? undefined : issue.code === 'invalid_type' ? 'Quotations must be string' : undefined }).optional(),
 })

@@ -118,7 +118,7 @@ const businessLoanSchema = z.object({
         : undefined
   }).regex(/^[1-9][0-9]{5}$/, { error: 'Enter a valid 6‑digit Indian pincode' }),
   country: BusinessLoanCountryEnum,
-  aadhar: z.string({
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -297,7 +297,7 @@ const businessLoanSchema = z.object({
         ? 'Office photo 4 must be string'
         : undefined
   }).min(1, { error: 'Office photo 4 is required' }),
-  aadharFile: z.string({
+  aadhaarFile: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar file is required'

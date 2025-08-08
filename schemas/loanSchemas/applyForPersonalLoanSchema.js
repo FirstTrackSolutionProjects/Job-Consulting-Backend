@@ -165,7 +165,7 @@ const applyForPersonalLoanSchema = z.object({
         : undefined
   }).optional(),
 
-  aadhar: z.string({
+  aadhaar: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar is required'
@@ -353,7 +353,7 @@ const applyForPersonalLoanSchema = z.object({
         : undefined
   }).email({ error: 'Official email is invalid' }),
 
-  aadharFile: z.string({
+  aadhaarFile: z.string({
     error: issue =>
       issue.input === undefined
         ? 'Aadhaar file is required'

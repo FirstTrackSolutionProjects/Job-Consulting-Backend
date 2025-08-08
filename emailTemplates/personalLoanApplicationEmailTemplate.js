@@ -7,12 +7,12 @@ const generateEmailHTMLTemplate = (data) => {
     title, fullName, email, stdCode, phone, altStdCode, altPhone,
     dob, gender, maritalStatus, spouseName, childrenCount, fatherName,
     motherName, residence, presentAddress, landmark, city, state,
-    pincode, country, permanentAddress, aadhar, pan, income,
+    pincode, country, permanentAddress, aadhaar, pan, income,
     employmentType, organization, designation, department, profession,
     experienceYears, experienceMonths, loanAmount, purpose,
     accountHolderName, bankName, accountNumber, ifsc, officialAddress,
     officialLandmark, officialCity, officialPincode, officialState,
-    officialCountry, officialEmail, aadharFile, panFile, photo,
+    officialCountry, officialEmail, aadhaarFile, panFile, photo,
     bankProof, salarySlip
   } = data;
 
@@ -43,7 +43,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Residence Type', residence)}
         ${row('Present Address', `${presentAddress}, ${landmark}, ${city}, ${state} - ${pincode}, ${country}`)}
         ${row('Permanent Address', permanentAddress)}
-        ${row('Aadhaar Number', aadhar)}
+        ${row('Aadhaar Number', aadhaar)}
         ${row('PAN Number', pan)}
         ${row('Monthly Income (INR)', income)}
         ${row('Employment Type', employmentType)}
@@ -61,7 +61,7 @@ const generateEmailHTMLTemplate = (data) => {
         ${row('Official Email', officialEmail)}
         ${row('Official Address', `${officialAddress}, ${officialLandmark}, ${officialCity}, ${officialState} - ${officialPincode}, ${officialCountry}`)}
 
-        ${row('Aadhaar File', `${BUCKET_URL}${aadharFile}`, true)}
+        ${row('Aadhaar File', `${BUCKET_URL}${aadhaarFile}`, true)}
         ${row('PAN File', `${BUCKET_URL}${panFile}`, true)}
         ${row('Photo', `${BUCKET_URL}${photo}`, true)}
         ${row('Bank Proof', `${BUCKET_URL}${bankProof}`, true)}

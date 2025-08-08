@@ -45,7 +45,7 @@ const generateEmailHTMLTemplate = (data) => {
     guardianphoto, guardianaadhaar, guardianpan,
     
     // Business files
-    gst, msme, electricityBill, rentagreement,
+    gst, msme, electricityBill, rentAgreement,
     companyPan, companyTan, cin, tradeLicense,
     foodLicense, drugLicense, bankStatementsCurrent,
     deedagreement,
@@ -154,7 +154,7 @@ const generateEmailHTMLTemplate = (data) => {
     `;
 
     if (businessType === 'Rented') {
-      businessFiles += `${row('Rent Agreement', rentagreement, true)}`;
+      businessFiles += `${row('Rent Agreement', rentAgreement, true)}`;
     }
 
     if (organizationType === 'Private Limited') {
